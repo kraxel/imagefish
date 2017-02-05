@@ -142,12 +142,23 @@ function fish_copy_tar() {
 EOF
 }
 
+function fish_grub2() {
+	local cfg="$1"
+
+	cat <<-EOF >> "$script"
+
+	# grub2 boot loader config
+	command grub2-mkconfig -o /etc/grub2-efi.cfg
+EOF
+}
+
 ######################################################################
 # go!
 
 fish_init
 fish_part_efi
 fish_copy_tar
+fish_grub2 /etc/grub2-efi.cfg
 
 echo "==="
 cat $script
