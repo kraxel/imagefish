@@ -1,0 +1,6 @@
+[mkimage-rhel-73-server]
+baseurl=http://spunk.home.kraxel.org/mirror/rhel/7/RHEL-7.3-20161019.0/compose/Server/$basearch/os/
+
+[mkimage-rhel-7-kraxel]
+baseurl=http://spunk.home.kraxel.org/mockify/jenkins/rhel-ko-7-$basearch/
+
