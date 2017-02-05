@@ -6,6 +6,7 @@
 qcow=""
 size="2G"
 tarb=""
+mode="efi"
 
 ######################################################################
 # create work dir
@@ -17,6 +18,7 @@ trap 'rm -rf "$WORK"' EXIT
 # work files
 script="$WORK/imagefish.script"
 fstab="$WORK/fstab"
+grubdef="$WORK/grub"
 
 ######################################################################
 # parse args
@@ -25,9 +27,12 @@ function print_help() {
 cat <<EOF
 usage: $0 [ options ]
 options:
-  --tar <tarball>
-  --image <image>
-  --size <size>                 (default: $size)
+  setup:
+    --tar <tarball>
+    --image <image>
+    --size <size>                 (default: $size)
+  mode:
+    --efi                         (default)
 EOF
 }
 
@@ -44,6 +49,10 @@ while test "$1" != ""; do
 	-t | --tar | --tarball)
 		tarb="$2"
 		shift; shift
+		;;
+	--efi)
+		mode="efi"
+		shift
 		;;
 	*)	echo "ERROR: unknown arg: $1"
 		exit 1
@@ -71,10 +80,17 @@ fi
 # fish script helpers
 
 function fish_init() {
+	local format
+
+	case "$qcow" in
+	*.raw)	format="raw" ;;
+	*)	format="qcow2";;
+	esac
+
 	cat <<-EOF >> "$script"
 
 	# init image, start guestfish with it
-	disk-create $qcow qcow2 $size
+	disk-create $qcow $format $size
 	add $qcow
 	run
 EOF
@@ -89,7 +105,7 @@ function fish_partition() {
 	local pend
 
 	echo ""							>> "$script"
-	echo "# create partitions"				>> "$script"
+	echo "!echo \"### creating partitions\""		>> "$script"
 	echo "part-init /dev/sda $ptype"			>> "$script"
 	for size in $szfirm $szboot $szswap; do
 		test "$size" = "0" && continue
@@ -107,17 +123,16 @@ function fish_part_efi() {
 
 	cat <<-EOF >> "$script"
 
-	# efi partition init
 	part-set-gpt-type /dev/sda 1 ${uuid_efi}
 	part-set-bootable /dev/sda 1 true
 
-	# create filesystems
+	!echo "### creating filesystems"
 	mkfs fat	/dev/sda1	label:uefi
 	mkfs ext2	/dev/sda2	label:boot
 	mkswap		/dev/sda3	label:swap
 	mkfs ext4	/dev/sda4	label:root
 
-	# mount filesystems
+	!echo "### mounting filesystems"
 	mount	/dev/sda4	/
 	mkdir			/boot
 	mount	/dev/sda2	/boot
@@ -128,7 +143,7 @@ EOF
 	cat <<-EOF > "$fstab"
 	LABEL=root	/		ext4	defaults	0 0
 	LABEL=boot	/boot		ext2	defaults	0 0
-	LABEL=uefi	/boot/efi	vfat	defaults	0 0
+#	LABEL=uefi	/boot/efi	vfat	defaults	0 0
 	LABEL=swap	swap		swap	defaults	0 0
 EOF
 }
@@ -136,35 +151,55 @@ EOF
 function fish_copy_tar() {
 	cat <<-EOF >> "$script"
 
-	# populate image
+	!echo "### copying tarball to image"
 	tar-in	$tarb	/	compress:gzip
 	copy-in	$fstab	/etc
+	write /.autorelabel ""
 EOF
 }
 
 function fish_grub2_efi() {
+	cat <<-EOF > "$grubdef"
+	GRUB_TIMEOUT="5"
+	GRUB_DISABLE_SUBMENU="true"
+	GRUB_DISABLE_RECOVERY="true"
+	#GRUB_CMDLINE_LINUX="root=LABEL=root"
+EOF
+
 	cat <<-EOF >> "$script"
 
-	# grub2 boot loader config
-	mkdir /sys/firmware
-	mkdir /sys/firmware/efi
+	!echo "### create grub2 boot loader config"
+	copy-in	$grubdef /etc/default
 	command "grub2-mkconfig -o /etc/grub2-efi.cfg"
-	rmdir /sys/firmware/efi
-	rmdir /sys/firmware
+	command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
+	command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"
 EOF
 }
 
 ######################################################################
 # go!
 
-fish_init
-fish_part_efi
-fish_copy_tar
-fish_grub2 /etc/grub2-efi.cfg
-
-echo "==="
-cat $script
-echo "==="
+case "$mode" in
+efi)
+	fish_init
+	fish_part_efi
+	fish_copy_tar
+	fish_grub2_efi
+	;;
+*)
+	# should not happen
+	echo "Oops"
+	exit 1
+	;;
+esac
+echo "!echo \"### all done\"" >> "$script"
 
 export LIBGUESTFS_BACKEND=direct
-guestfish -x --progress-bars -f "$script"
+if guestfish --progress-bars -f "$script"; then
+	true # nothing
+else
+	echo "guestfish error, here is the script"
+	echo "==="
+	cat $script
+	echo "==="
+fi

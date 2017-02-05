@@ -11,4 +11,5 @@ scripts/install-redhat.sh			\
 	--dnf 
 scripts/tar-to-image.sh				\
 	--tar		"$tar"			\
-	--image		"$img"
+	--image		"$img"			\
+	--efi

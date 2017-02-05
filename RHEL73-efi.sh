@@ -11,4 +11,6 @@ scripts/install-redhat.sh			\
 	--yum
 scripts/tar-to-image.sh				\
 	--tar		"$tar"			\
-	--image		"$img"
+	--image		"$img"			\
+	--efi
+

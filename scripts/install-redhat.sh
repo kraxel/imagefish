@@ -111,7 +111,7 @@ dnf)
 	fi
 	;;
 yum)
-	tool="$tool -y --installroot ${dest}"
+	tool="$tool -y --quiet --installroot ${dest}"
 	if test "$conf" != ""; then
 		tool="$tool --config ${conf}"
 	fi
