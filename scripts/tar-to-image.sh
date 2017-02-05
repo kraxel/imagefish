@@ -149,8 +149,9 @@ fish_init
 fish_part_efi
 fish_copy_tar
 
+echo "==="
 cat $script
-exit
+echo "==="
 
 export LIBGUESTFS_BACKEND=direct
 guestfish -x --progress-bars -f "$script"
