@@ -14,8 +14,22 @@ WORK="${TMPDIR-/var/tmp}/${0##*/}-$$"
 mkdir "$WORK" || exit 1
 trap 'rm -rf "$WORK"' EXIT
 
+# work files
+script="$WORK/imagefish.script"
+fstab="$WORK/fstab"
+
 ######################################################################
 # parse args
+
+function print_help() {
+cat <<EOF
+usage: $0 [ options ]
+options:
+  --tar <tarball>
+  --image <image>
+  --size <size>                 (default: $size)
+EOF
+}
 
 while test "$1" != ""; do
 	case "$1" in
@@ -54,45 +68,89 @@ if test ! -f "$tarb"; then
 fi
 
 ######################################################################
-# go!
+# fish script helpers
 
-p0=1
-p1=$(( $p0 + 200 ))
-p2=$(( $p1 + 300 ))
-p3=$(( $p2 + 500 ))
+function fish_init() {
+	cat <<-EOF >> "$script"
 
-cat <<EOF > "$WORK/mkimage.fish"
-disk-create $qcow qcow2 $size
-add $qcow
-run
+	# init image, start guestfish with it
+	disk-create $qcow qcow2 $size
+	add $qcow
+	run
+EOF
+}
 
-# create partitions
-part-init /dev/sda gpt
-part-add /dev/sda primary $(( 2048 * $p0)) $(( 2048 * $p1 - 1 )) 
-part-add /dev/sda primary $(( 2048 * $p1)) $(( 2048 * $p2 - 1 )) 
-part-add /dev/sda primary $(( 2048 * $p2)) $(( 2048 * $p3 - 1 )) 
-part-add /dev/sda primary $(( 2048 * $p3)) -2048
+function fish_partition() {
+	local ptype="$1"
+	local szfirm="$2"
+	local szboot="$3"
+	local szswap="$4"
+	local pstart=2048
+	local pend
 
-# tag EFI System partition
-part-set-gpt-type /dev/sda 1 C12A7328-F81F-11D2-BA4B-00A0C93EC93B
+	echo ""							>> "$script"
+	echo "# create partitions"				>> "$script"
+	echo "part-init /dev/sda $ptype"			>> "$script"
+	for size in $szfirm $szboot $szswap; do
+		test "$size" = "0" && continue
+		pend=$(( $pstart + $size * 2048 - 1 ))
+		echo "part-add /dev/sda p $pstart $pend"	>> "$script"
+		pstart=$(( $pend + 1 ))
+	done
+	echo "part-add /dev/sda p $pstart -2048"		>> "$script"
+}
 
-# create filesystems
-mkfs fat	/dev/sda1	label:uefi
-mkfs ext2	/dev/sda2	label:boot
-mkswap		/dev/sda3	label:swap
-mkfs ext4	/dev/sda4	label:root
+function fish_part_efi() {
+	local uuid_efi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
 
-# make dirs & mount
-mount	/dev/sda4	/
-mkdir			/boot
-mount	/dev/sda2	/boot
-mkdir			/boot/efi
-mount	/dev/sda1	/boot/efi
+	fish_partition gpt 200 300 500
 
-# populate image
-tar-in	$tarb	/	compress:gzip
+	cat <<-EOF >> "$script"
+
+	# efi partition init
+	part-set-gpt-type /dev/sda 1 ${uuid_efi}
+	part-set-bootable /dev/sda 1 true
+
+	# create filesystems
+	mkfs fat	/dev/sda1	label:uefi
+	mkfs ext2	/dev/sda2	label:boot
+	mkswap		/dev/sda3	label:swap
+	mkfs ext4	/dev/sda4	label:root
+
+	# mount filesystems
+	mount	/dev/sda4	/
+	mkdir			/boot
+	mount	/dev/sda2	/boot
+	mkdir			/boot/efi
+	mount	/dev/sda1	/boot/efi
 EOF
 
+	cat <<-EOF > "$fstab"
+	LABEL=root	/		ext4	defaults	0 0
+	LABEL=boot	/boot		ext2	defaults	0 0
+	LABEL=uefi	/boot/efi	vfat	defaults	0 0
+	LABEL=swap	swap		swap	defaults	0 0
+EOF
+}
+
+function fish_copy_tar() {
+	cat <<-EOF >> "$script"
+
+	# populate image
+	tar-in	$tarb	/	compress:gzip
+	copy-in	$fstab	/etc
+EOF
+}
+
+######################################################################
+# go!
+
+fish_init
+fish_part_efi
+fish_copy_tar
+
+cat $script
+exit
+
 export LIBGUESTFS_BACKEND=direct
-set -ex
-guestfish -x --progress-bars -f "$WORK/mkimage.fish"
+guestfish -x --progress-bars -f "$script"
