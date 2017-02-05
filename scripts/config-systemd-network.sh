@@ -9,6 +9,16 @@ WORK="${TMPDIR-/tmp}/${0##*/}-$$"
 mkdir "$WORK" || exit 1
 trap 'rm -rf "$WORK"' EXIT
 
+cat <<EOF > "$WORK/ethernet.network"
+
+[Match]
+Name=e*
+
+[Network]
+DHCP=v4
+
+EOF
+
 cat <<EOF > "$WORK/script"
 
 # turn off NetworkManager
@@ -22,6 +32,9 @@ link /usr/lib/systemd/system/systemd-networkd.socket:/etc/systemd/system/sockets
 link /usr/lib/systemd/system/systemd-resolved.service:/etc/systemd/system/multi-user.target.wants/systemd-resolved.service
 delete /etc/resolv.conf
 link /run/systemd/resolve/resolv.conf:/etc/resolv.conf
+
+mkdir /etc/systemd/network
+copy-in $WORK/ethernet.network /etc/systemd/network
 
 EOF
 
