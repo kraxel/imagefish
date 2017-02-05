@@ -142,13 +142,15 @@ function fish_copy_tar() {
 EOF
 }
 
-function fish_grub2() {
-	local cfg="$1"
-
+function fish_grub2_efi() {
 	cat <<-EOF >> "$script"
 
 	# grub2 boot loader config
+	mkdir /sys/firmware
+	mkdir /sys/firmware/efi
 	command "grub2-mkconfig -o /etc/grub2-efi.cfg"
+	rmdir /sys/firmware/efi
+	rmdir /sys/firmware
 EOF
 }
 

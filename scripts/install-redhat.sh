@@ -127,6 +127,7 @@ yum)
 	;;
 esac
 
+mkdir -p ${dest}/{dev,proc,sys,mnt}
 inst=""
 for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done
