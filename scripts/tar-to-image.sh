@@ -33,6 +33,8 @@ options:
     --size <size>                 (default: $size)
   mode:
     --efi                         (default)
+    --rpi32
+    --rpi64
 EOF
 }
 
@@ -52,6 +54,14 @@ while test "$1" != ""; do
 		;;
 	--efi)
 		mode="efi"
+		shift
+		;;
+	--rpi32)
+		mode="rpi32"
+		shift
+		;;
+	--rpi64)
+		mode="rpi64"
 		shift
 		;;
 	*)	echo "ERROR: unknown arg: $1"
@@ -116,6 +126,16 @@ function fish_partition() {
 	echo "part-add /dev/sda p $pstart -2048"		>> "$script"
 }
 
+function fish_copy_tar() {
+	cat <<-EOF >> "$script"
+
+	!echo "### copying tarball to image"
+	tar-in	$tarb	/	compress:gzip
+	copy-in	$fstab	/etc
+	write /.autorelabel ""
+EOF
+}
+
 function fish_part_efi() {
 	local uuid_efi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
 
@@ -127,7 +147,7 @@ function fish_part_efi() {
 	part-set-bootable /dev/sda 1 true
 
 	!echo "### creating filesystems"
-	mkfs fat	/dev/sda1	label:uefi
+	mkfs fat	/dev/sda1	label:UEFI
 	mkfs ext2	/dev/sda2	label:boot
 	mkswap		/dev/sda3	label:swap
 	mkfs ext4	/dev/sda4	label:root
@@ -143,18 +163,8 @@ EOF
 	cat <<-EOF > "$fstab"
 	LABEL=root	/		ext4	defaults	0 0
 	LABEL=boot	/boot		ext2	defaults	0 0
-#	LABEL=uefi	/boot/efi	vfat	defaults	0 0
+	LABEL=UEFI	/boot/efi	vfat	defaults	0 0
 	LABEL=swap	swap		swap	defaults	0 0
-EOF
-}
-
-function fish_copy_tar() {
-	cat <<-EOF >> "$script"
-
-	!echo "### copying tarball to image"
-	tar-in	$tarb	/	compress:gzip
-	copy-in	$fstab	/etc
-	write /.autorelabel ""
 EOF
 }
 
@@ -176,6 +186,44 @@ EOF
 EOF
 }
 
+function fish_part_rpi() {
+	fish_partition mbr 200 300 500
+
+	cat <<-EOF >> "$script"
+
+	!echo "### creating filesystems"
+	mkfs fat	/dev/sda1	label:FIRMWARE
+	mkfs ext2	/dev/sda2	label:boot
+	mkswap		/dev/sda3	label:swap
+	mkfs ext4	/dev/sda4	label:root
+
+	!echo "### mounting filesystems"
+	mount	/dev/sda4	/
+	mkdir			/boot
+	mount	/dev/sda2	/boot
+	mkdir			/boot/fw
+	mount	/dev/sda1	/boot/fw
+EOF
+
+	cat <<-EOF > "$fstab"
+	LABEL=root	/		ext4	defaults	0 0
+	LABEL=boot	/boot		ext2	defaults	0 0
+	LABEL=FIRMWARE	/boot/fw	vfat	ro		0 0
+	LABEL=swap	swap		swap	defaults	0 0
+EOF
+}
+
+function fish_firmware_rpi32() {
+	cat <<-EOF >> "$script"
+
+	!echo "### rpi2 firmware setup"
+	cp-a	/usr/share/bcm283x-firmware/*		/boot/fw
+	cp	/usr/share/uboot/rpi_2/u-boot.bin	/boot/fw/rpi2-u-boot.bin
+	cp	/usr/share/uboot/rpi_3_32b/u-boot.bin	/boot/fw/rpi3-u-boot.bin
+	ls -l	/boot/fw
+EOF
+}
+
 ######################################################################
 # go!
 
@@ -185,6 +233,17 @@ efi)
 	fish_part_efi
 	fish_copy_tar
 	fish_grub2_efi
+	;;
+rpi32)
+	fish_init
+	fish_part_rpi
+	fish_copy_tar
+	fish_firmware_rpi32
+	;;
+rpi64)
+	fish_init
+	fish_part_rpi
+	fish_copy_tar
 	;;
 *)
 	# should not happen
