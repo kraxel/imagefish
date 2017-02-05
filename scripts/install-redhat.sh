@@ -132,7 +132,7 @@ for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done
 echo "### dnf install to $dest ..."
 (set -x; sudo $tool install $inst)					|| exit 1
-sudo rm -rf "${dest}/var/cache/dnf"
+sudo rm -rf "${dest}/var/cache/"{dnf,yum}
 
 if test "$tarb" != ""; then
 	case "$tarb" in
