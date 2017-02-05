@@ -7,7 +7,7 @@ rm -f "$tar" "$img"
 scripts/install-redhat.sh			\
 	--config	repos/rhel-73.repo	\
 	--tar		"$tar"			\
-	--packages	"grub2-efi shim"	\
+	--packages	"grub2-efi shim kernel"	\
 	--yum
 scripts/tar-to-image.sh				\
 	--tar		"$tar"			\

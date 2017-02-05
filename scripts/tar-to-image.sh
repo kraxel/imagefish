@@ -148,7 +148,7 @@ function fish_grub2() {
 	cat <<-EOF >> "$script"
 
 	# grub2 boot loader config
-	command grub2-mkconfig -o /etc/grub2-efi.cfg
+	command "grub2-mkconfig -o /etc/grub2-efi.cfg"
 EOF
 }
 
