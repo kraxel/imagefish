@@ -115,6 +115,10 @@ yum)
 	if test "$conf" != ""; then
 		tool="$tool --config ${conf}"
 	fi
+	# with this yum uses the (empty) installroot repos dir,
+	# so we don't have to hop through enablerepo/disablerepo
+	# loops to disable the host repos
+	mkdir -p ${dest}/etc/yum.repos.d
 	;;
 *)
 	# should not happen
