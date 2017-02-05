@@ -13,4 +13,3 @@ scripts/tar-to-image.sh				\
 	--tar		"$tar"			\
 	--image		"$img"			\
 	--efi
-
