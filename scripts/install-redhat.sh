@@ -7,7 +7,7 @@ dest=""
 tarb=""
 tool="dnf"
 grps="core"
-rpms=""
+rpms="kernel"
 conf=""
 
 ######################################################################
@@ -36,7 +36,7 @@ options:
     --dest <dir>
   what to install
     --groups <groups>               (default: $grps)
-    --packages <rpms>
+    --packages <rpms>               (default: $rpms)
   package manager setup
     --config <repos>
     --dnf                           (default)
@@ -75,6 +75,10 @@ while test "$1" != ""; do
 		tool="yum"
 		shift
 		;;
+	--force)
+		allow_override="yes"
+		shift
+		;;
 	-h | --help)
 		print_help
 		exit 1
@@ -101,8 +105,12 @@ if test "$conf" != "" -a ! -f "$conf"; then
 	exit 1
 fi
 if test "$tarb" != "" -a -f "$tarb"; then
-	echo "ERROR: tarball exists: $tarb"
-	exit 1
+	if test "$allow_override" = "yes"; then
+		rm -f "$tarb"
+	else
+		echo "ERROR: tarball exists: $tarb"
+		exit 1
+	fi
 fi
 
 ######################################################################
