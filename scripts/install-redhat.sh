@@ -14,9 +14,8 @@ conf=""
 # create work dir
 
 function do_cleanup() {
-	set -x
 	echo "### cleaning up ..."
-	sudo umount -v "$dest/dev"
+#	sudo umount -v "$dest/dev"
 	sudo rm -rf "$WORK"
 }
 
@@ -147,7 +146,8 @@ inst=""
 for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done
 echo "### dnf install to $dest ..."
-sudo mount --bind,ro /dev $dest/dev
+#sudo mount --bind /dev $dest/dev
+#sudo mount -o remount,bind,ro $dest/dev
 (set -x; sudo $tool install $inst)					|| exit 1
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
 
