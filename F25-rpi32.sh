@@ -2,7 +2,7 @@
 
 name="fedora-25-rpi2"
 repo="repos/fedora-25.repo"
-rpms="kernel bcm283x-firmware uboot-images-armv7"
+rpms="bcm283x-firmware uboot-images-armv7 extlinux-bootloader kernel"
 
 arch="$(uname -m)"
 tar="${name}-${arch}.tar.gz"
