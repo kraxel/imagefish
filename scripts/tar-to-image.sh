@@ -64,6 +64,10 @@ while test "$1" != ""; do
 		mode="rpi64"
 		shift
 		;;
+	--force)
+		allow_override="yes"
+		shift
+		;;
 	*)	echo "ERROR: unknown arg: $1"
 		exit 1
 		;;
@@ -78,8 +82,12 @@ if test "$qcow" = ""; then
 	exit 1
 fi
 if test -f "$qcow"; then
-	echo "ERROR: image exists: $qcow"
-	exit 1
+	if test "$allow_override" = "yes"; then
+		rm -f "$qcow"
+	else
+		echo "ERROR: image exists: $qcow"
+		exit 1
+	fi
 fi
 if test ! -f "$tarb"; then
 	echo "ERROR: tarball not found: $tarb"
