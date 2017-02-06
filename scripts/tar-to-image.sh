@@ -108,6 +108,7 @@ function fish_init() {
 	cat <<-EOF >> "$script"
 
 	# init image, start guestfish with it
+	!echo "### creating and adding disk image"
 	disk-create $qcow $format $size
 	add $qcow
 	run
@@ -199,6 +200,7 @@ function fish_part_rpi() {
 
 	cat <<-EOF >> "$script"
 
+	part-set-bootable /dev/sda 2 true
 	part-set-mbr-id /dev/sda 1 0x0c
 	part-set-mbr-id /dev/sda 2 0x83
 	part-set-mbr-id /dev/sda 3 0x82
@@ -273,4 +275,25 @@ else
 	echo "==="
 	cat $script
 	echo "==="
+	exit 1
 fi
+
+case "$mode" in
+rpi32)
+	echo "### create extlinux.conf"
+	kver=$(virt-ls -a "$qcow" /boot \
+		| grep -e "^vmlinuz-" | grep -v rescue \
+		| sed -e "s/vmlinuz-//")
+	echo "### kernel version is $kver"
+	cat <<-EOF >> "$WORK/extlinux.conf"
+	menu title select kernel
+	timeout 100
+	label Fedora (${kver})
+	  kernel /vmlinuz-${kver}
+	  append ro root=LABEL=root console=ttyAMA0,115200 console=tty1
+	  fdtdir /dtb-${kver}/
+	  initrd /initramfs-${kver}.img
+EOF
+	virt-copy-in -a "$qcow" "$WORK/extlinux.conf" /boot/extlinux
+	;;
+esac
