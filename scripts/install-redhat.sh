@@ -13,9 +13,16 @@ conf=""
 ######################################################################
 # create work dir
 
+function do_cleanup() {
+	set -x
+	echo "### cleaning up ..."
+	sudo umount -v "$dest/dev"
+	sudo rm -rf "$WORK"
+}
+
 WORK="${TMPDIR-/var/tmp}/${0##*/}-$$"
 mkdir "$WORK" || exit 1
-trap 'sudo rm -rf "$WORK"' EXIT
+trap 'do_cleanup' EXIT
 
 ######################################################################
 # parse args
@@ -132,6 +139,7 @@ inst=""
 for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done
 echo "### dnf install to $dest ..."
+sudo mount --bind,ro /dev $dest/dev
 (set -x; sudo $tool install $inst)					|| exit 1
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
 
@@ -148,5 +156,4 @@ if test "$tarb" != ""; then
 	(cd $dest; sudo tar --create $topt .) > "$tarb"
 fi
 
-echo "### done, cleanup ..."
-
+echo "### all done."
