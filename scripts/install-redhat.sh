@@ -152,7 +152,7 @@ if test "$tarb" != ""; then
 	*)	topt=""
 		;;
 	esac
-	echo "### create tarball ..."
+	echo "### create tarball $tarb ..."
 	(cd $dest; sudo tar --create $topt .) > "$tarb"
 fi
 
