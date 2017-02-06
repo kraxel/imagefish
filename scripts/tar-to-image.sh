@@ -200,9 +200,9 @@ function fish_part_rpi() {
 	cat <<-EOF >> "$script"
 
 	part-set-mbr-id /dev/sda 1 0x0c
-	part-set-mbr-id /dev/sda 1 0x83
-	part-set-mbr-id /dev/sda 1 0x82
-	part-set-mbr-id /dev/sda 1 0x83
+	part-set-mbr-id /dev/sda 2 0x83
+	part-set-mbr-id /dev/sda 3 0x82
+	part-set-mbr-id /dev/sda 4 0x83
 
 	!echo "### creating filesystems"
 	mkfs fat	/dev/sda1	label:FIRMWARE
