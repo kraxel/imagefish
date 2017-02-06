@@ -217,7 +217,7 @@ function fish_firmware_rpi32() {
 	cat <<-EOF >> "$script"
 
 	!echo "### rpi2 firmware setup"
-	command "cp -v /usr/share/bcm283x-firmware/* /boot/fw/"
+	glob cp-a /usr/share/bcm283x-firmware/*		/boot/fw
 	cp	/usr/share/uboot/rpi_2/u-boot.bin	/boot/fw/rpi2-u-boot.bin
 	cp	/usr/share/uboot/rpi_3_32b/u-boot.bin	/boot/fw/rpi3-u-boot.bin
 	ls -l	/boot/fw
