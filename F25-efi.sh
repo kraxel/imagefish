@@ -1,15 +1,13 @@
 #!/bin/sh
+
+name="fedora-25-efi"
+repo="repos/fedora-25.repo"
+rpms="kernel grub2-efi shim"
+
 arch="$(uname -m)"
-tar="fedora-25-efi-${arch}.tar.gz"
-img="fedora-25-efi-${arch}.qcow2"
+tar="${name}-${arch}.tar.gz"
+img="${name}-${arch}.qcow2"
 set -ex
 rm -f "$tar" "$img"
-scripts/install-redhat.sh			\
-	--config	repos/fedora-25.repo	\
-	--tar		"$tar"			\
-	--packages	"grub2-efi shim kernel"	\
-	--dnf 
-scripts/tar-to-image.sh				\
-	--tar		"$tar"			\
-	--image		"$img"			\
-	--efi
+scripts/install-redhat.sh --config "$repo" --tar "$tar" --packages "$rpms" --dnf 
+scripts/tar-to-image.sh --tar "$tar" --image "$img" --efi
