@@ -238,23 +238,38 @@ function fish_firmware_rpi32() {
 	fish cp	/usr/share/uboot/rpi_3_32b/u-boot.bin	/boot/fw/rpi3-u-boot.bin
 }
 
-function fish_extlinux_rpi32() {
-	msg "create extlinux.conf"
+function fish_firmware_rpi64() {
+	msg "rpi 64bit firmware setup"
+	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/fw
+	fish cp	/usr/share/uboot/rpi_3/u-boot.bin	/boot/fw/rpi3-u-boot.bin
+}
+
+function fish_extlinux_rpi() {
+	local cmdline="ro root=LABEL=root console=ttyAMA0,115200 console=tty1"
+
+	msg "boot setup"
 	kver=$(guestfish --remote -- ls /boot \
 		| grep -e "^vmlinuz-" | grep -v rescue \
 		| sed -e "s/vmlinuz-//")
 	echo "### kernel version is $kver"
 
+	echo "### add /boot/cmdline.txt (for kraxel kernel-main)"
+	fish write /boot/cmdline.txt "$cmdline"
+
+	echo "### creating extlinux.conf"
 	cat <<-EOF >> "$WORK/extlinux.conf"
 	menu title Fedora boot menu
 	timeout 30
 	label Fedora (${kver})
 	  kernel /vmlinuz-${kver}
-	  append ro root=LABEL=root console=ttyAMA0,115200 console=tty1
+	  append ${cmdline}
 	  fdtdir /dtb-${kver}/
 	  initrd /initramfs-${kver}.img
 EOF
 	fish copy-in "$WORK/extlinux.conf" /boot/extlinux
+
+	echo "### rebuilding initramfs"
+	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
 }
 
 ######################################################################
@@ -279,12 +294,14 @@ rpi32)
 	fish_part_rpi
 	fish_copy_tar
 	fish_firmware_rpi32
-	fish_extlinux_rpi32
+	fish_extlinux_rpi
 	;;
 rpi64)
 	fish_init
 	fish_part_rpi
 	fish_copy_tar
+	fish_firmware_rpi64
+	fish_extlinux_rpi
 	;;
 *)
 	# should not happen
