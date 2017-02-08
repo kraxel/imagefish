@@ -11,9 +11,24 @@ mode="efi"
 ######################################################################
 # create work dir
 
+function msg() {
+	local txt="$1"
+	local bold="\x1b[1m"
+	local normal="\x1b[0m"
+	echo -e "${bold}### ${txt}${normal}"
+}
+
+function do_cleanup() {
+	msg "cleaning up ..."
+	if test "$GUESTFISH_PID" != ""; then
+		guestfish --remote -- exit >/dev/null 2>&1 || true
+	fi
+	rm -rf "$WORK"
+}
+
 WORK="${TMPDIR-/var/tmp}/${0##*/}-$$"
 mkdir "$WORK" || exit 1
-trap 'rm -rf "$WORK"' EXIT
+trap 'do_cleanup' EXIT
 
 # work files
 script="$WORK/imagefish.script"
@@ -95,7 +110,12 @@ if test ! -f "$tarb"; then
 fi
 
 ######################################################################
-# fish script helpers
+# guestfish script helpers
+
+function fish() {
+	echo "#" "$@"
+	guestfish --remote -- "$@"		|| exit 1
+}
 
 function fish_init() {
 	local format
@@ -105,14 +125,10 @@ function fish_init() {
 	*)	format="qcow2";;
 	esac
 
-	cat <<-EOF >> "$script"
-
-	# init image, start guestfish with it
-	!echo "### creating and adding disk image"
-	disk-create $qcow $format $size
-	add $qcow
-	run
-EOF
+	msg "creating and adding disk image"
+	fish disk-create $qcow $format $size
+	fish add $qcow
+	fish run
 }
 
 function fish_partition() {
@@ -123,26 +139,22 @@ function fish_partition() {
 	local pstart=2048
 	local pend
 
-	echo ""							>> "$script"
-	echo "!echo \"### creating partitions\""		>> "$script"
-	echo "part-init /dev/sda $ptype"			>> "$script"
+	msg "creating partitions"
+	fish part-init /dev/sda $ptype
 	for size in $szfirm $szboot $szswap; do
 		test "$size" = "0" && continue
 		pend=$(( $pstart + $size * 2048 - 1 ))
-		echo "part-add /dev/sda p $pstart $pend"	>> "$script"
+		fish part-add /dev/sda p $pstart $pend
 		pstart=$(( $pend + 1 ))
 	done
-	echo "part-add /dev/sda p $pstart -2048"		>> "$script"
+	fish part-add /dev/sda p $pstart -2048
 }
 
 function fish_copy_tar() {
-	cat <<-EOF >> "$script"
-
-	!echo "### copying tarball to image"
-	tar-in	$tarb	/	compress:gzip
-	copy-in	$fstab	/etc
-	write /.autorelabel ""
-EOF
+	msg "copying tarball to image"
+	fish tar-in	$tarb	/	compress:gzip
+	fish copy-in	$fstab	/etc
+	fish write /.autorelabel ""
 }
 
 function fish_part_efi() {
@@ -150,24 +162,21 @@ function fish_part_efi() {
 
 	fish_partition gpt 200 300 500
 
-	cat <<-EOF >> "$script"
+	fish part-set-gpt-type /dev/sda 1 ${uuid_efi}
+	fish part-set-bootable /dev/sda 1 true
 
-	part-set-gpt-type /dev/sda 1 ${uuid_efi}
-	part-set-bootable /dev/sda 1 true
+	msg "creating filesystems"
+	fish mkfs fat	/dev/sda1	label:UEFI
+	fish mkfs ext2	/dev/sda2	label:boot
+	fish mkswap	/dev/sda3	label:swap
+	fish mkfs ext4	/dev/sda4	label:root
 
-	!echo "### creating filesystems"
-	mkfs fat	/dev/sda1	label:UEFI
-	mkfs ext2	/dev/sda2	label:boot
-	mkswap		/dev/sda3	label:swap
-	mkfs ext4	/dev/sda4	label:root
-
-	!echo "### mounting filesystems"
-	mount	/dev/sda4	/
-	mkdir			/boot
-	mount	/dev/sda2	/boot
-	mkdir			/boot/efi
-	mount	/dev/sda1	/boot/efi
-EOF
+	msg "mounting filesystems"
+	fish mount	/dev/sda4	/
+	fish mkdir			/boot
+	fish mount	/dev/sda2	/boot
+	fish mkdir			/boot/efi
+	fist mount	/dev/sda1	/boot/efi
 
 	cat <<-EOF > "$fstab"
 	LABEL=root	/		ext4	defaults	0 0
@@ -185,61 +194,78 @@ function fish_grub2_efi() {
 	#GRUB_CMDLINE_LINUX="root=LABEL=root"
 EOF
 
-	cat <<-EOF >> "$script"
-
-	!echo "### create grub2 boot loader config"
-	copy-in	$grubdef /etc/default
-	command "grub2-mkconfig -o /etc/grub2-efi.cfg"
-	command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
-	command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"
-EOF
+	msg "create grub2 boot loader config"
+	fish copy-in	$grubdef /etc/default
+	fish command "grub2-mkconfig -o /etc/grub2-efi.cfg"
+	fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
+	fish command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"
 }
 
 function fish_part_rpi() {
 	fish_partition mbr 200 300 500
 
-	cat <<-EOF >> "$script"
+	fish part-set-bootable /dev/sda 2 true
+	fish part-set-mbr-id /dev/sda 1 0x0c
+	fish part-set-mbr-id /dev/sda 2 0x83
+	fish part-set-mbr-id /dev/sda 3 0x82
+	fish part-set-mbr-id /dev/sda 4 0x83
 
-	part-set-bootable /dev/sda 2 true
-	part-set-mbr-id /dev/sda 1 0x0c
-	part-set-mbr-id /dev/sda 2 0x83
-	part-set-mbr-id /dev/sda 3 0x82
-	part-set-mbr-id /dev/sda 4 0x83
+	msg "creating filesystems"
+	fish mkfs fat	/dev/sda1	label:firmware
+	fish mkfs ext2	/dev/sda2	label:boot
+	fish mkswap	/dev/sda3	label:swap
+	fish mkfs ext4	/dev/sda4	label:root
 
-	!echo "### creating filesystems"
-	mkfs fat	/dev/sda1	label:FIRMWARE
-	mkfs ext2	/dev/sda2	label:boot
-	mkswap		/dev/sda3	label:swap
-	mkfs ext4	/dev/sda4	label:root
-
-	!echo "### mounting filesystems"
-	mount	/dev/sda4	/
-	mkdir			/boot
-	mount	/dev/sda2	/boot
-	mkdir			/boot/fw
-	mount	/dev/sda1	/boot/fw
-EOF
+	msg "mounting filesystems"
+	fish mount	/dev/sda4	/
+	fish mkdir			/boot
+	fish mount	/dev/sda2	/boot
+	fish mkdir			/boot/fw
+	fish mount	/dev/sda1	/boot/fw
 
 	cat <<-EOF > "$fstab"
 	LABEL=root	/		ext4	defaults	0 0
 	LABEL=boot	/boot		ext2	defaults	0 0
-	LABEL=FIRMWARE	/boot/fw	vfat	ro		0 0
+	LABEL=firmware	/boot/fw	vfat	ro		0 0
 	LABEL=swap	swap		swap	defaults	0 0
 EOF
 }
 
 function fish_firmware_rpi32() {
-	cat <<-EOF >> "$script"
+	msg "rpi 32bit firmware setup"
+	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/fw
+	fish cp	/usr/share/uboot/rpi_2/u-boot.bin	/boot/fw/rpi2-u-boot.bin
+	fish cp	/usr/share/uboot/rpi_3_32b/u-boot.bin	/boot/fw/rpi3-u-boot.bin
+}
 
-	!echo "### rpi2 firmware setup"
-	glob cp-a /usr/share/bcm283x-firmware/*		/boot/fw
-	cp	/usr/share/uboot/rpi_2/u-boot.bin	/boot/fw/rpi2-u-boot.bin
-	cp	/usr/share/uboot/rpi_3_32b/u-boot.bin	/boot/fw/rpi3-u-boot.bin
+function fish_extlinux_rpi32() {
+	msg "create extlinux.conf"
+	kver=$(guestfish --remote -- ls /boot \
+		| grep -e "^vmlinuz-" | grep -v rescue \
+		| sed -e "s/vmlinuz-//")
+	echo "### kernel version is $kver"
+
+	cat <<-EOF >> "$WORK/extlinux.conf"
+	menu title Fedora boot menu
+	timeout 30
+	label Fedora (${kver})
+	  kernel /vmlinuz-${kver}
+	  append ro root=LABEL=root console=ttyAMA0,115200 console=tty1
+	  fdtdir /dtb-${kver}/
+	  initrd /initramfs-${kver}.img
 EOF
+	fish copy-in "$WORK/extlinux.conf" /boot/extlinux
 }
 
 ######################################################################
 # go!
+
+export LIBGUESTFS_BACKEND=direct
+eval $(guestfish --listen)
+if test "$GUESTFISH_PID" = ""; then
+	echo "ERROR: starting guestfish failed"
+	exit 1
+fi
 
 case "$mode" in
 efi)
@@ -253,6 +279,7 @@ rpi32)
 	fish_part_rpi
 	fish_copy_tar
 	fish_firmware_rpi32
+	fish_extlinux_rpi32
 	;;
 rpi64)
 	fish_init
@@ -265,35 +292,5 @@ rpi64)
 	exit 1
 	;;
 esac
-echo "!echo \"### all done\"" >> "$script"
 
-export LIBGUESTFS_BACKEND=direct
-if guestfish --progress-bars -f "$script"; then
-	true # nothing
-else
-	echo "guestfish error, here is the script"
-	echo "==="
-	cat $script
-	echo "==="
-	exit 1
-fi
-
-case "$mode" in
-rpi32)
-	echo "### create extlinux.conf"
-	kver=$(virt-ls -a "$qcow" /boot \
-		| grep -e "^vmlinuz-" | grep -v rescue \
-		| sed -e "s/vmlinuz-//")
-	echo "### kernel version is $kver"
-	cat <<-EOF >> "$WORK/extlinux.conf"
-	menu title select kernel
-	timeout 100
-	label Fedora (${kver})
-	  kernel /vmlinuz-${kver}
-	  append ro root=LABEL=root console=ttyAMA0,115200 console=tty1
-	  fdtdir /dtb-${kver}/
-	  initrd /initramfs-${kver}.img
-EOF
-	virt-copy-in -a "$qcow" "$WORK/extlinux.conf" /boot/extlinux
-	;;
-esac
+msg "all done."
