@@ -4,7 +4,7 @@
 # defaults
 
 qcow=""
-size="2G"
+size="4G"
 tarb=""
 mode="efi"
 
