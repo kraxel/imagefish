@@ -2,7 +2,7 @@
 
 name="fedora-25-efi"
 repo="repos/fedora-25.repo"
-rpms="kernel grub2-efi shim"
+rpms="grub2-efi shim"
 
 arch="$(uname -m)"
 tar="${name}-${arch}.tar.gz"

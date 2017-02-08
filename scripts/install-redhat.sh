@@ -7,7 +7,8 @@ dest=""
 tarb=""
 tool="dnf"
 grps="core"
-rpms="kernel"
+rpms=""
+krnl="kernel"
 conf=""
 
 ######################################################################
@@ -36,6 +37,7 @@ options:
   what to install
     --groups <groups>               (default: $grps)
     --packages <rpms>               (default: $rpms)
+    --kernel <kernel>               (default: $krnl)
   package manager setup
     --config <repos>
     --dnf                           (default)
@@ -60,6 +62,10 @@ while test "$1" != ""; do
 		;;
 	-p | --packages)
 		rpms="$2"
+		shift; shift
+		;;
+	-k | --kernel)
+		krnl="$2"
 		shift; shift
 		;;
 	-c | --config)
@@ -117,7 +123,7 @@ fi
 
 case "$tool" in
 dnf)
-	tool="$tool -y --quiet --installroot ${dest}"
+	tool="$tool -y --installroot ${dest}"
 	if test "$conf" != ""; then
 		tool="$tool --config ${conf}"
 		tool="$tool --disablerepo=*"
@@ -125,7 +131,7 @@ dnf)
 	fi
 	;;
 yum)
-	tool="$tool -y --quiet --installroot ${dest}"
+	tool="$tool -y --installroot ${dest}"
 	if test "$conf" != ""; then
 		tool="$tool --config ${conf}"
 	fi
@@ -145,10 +151,14 @@ mkdir -p ${dest}/{dev,proc,sys,mnt}
 inst=""
 for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done
-echo "### dnf install to $dest ..."
+echo "### dnf install packages to $dest ..."
 #sudo mount --bind /dev $dest/dev
 #sudo mount -o remount,bind,ro $dest/dev
-(set -x; sudo $tool install $inst)					|| exit 1
+(set -x; sudo $tool --quiet install $inst)				|| exit 1
+if test "$krnl" != ""; then
+	echo "### dnf install $krnl to $dest ..."
+	(set -x; sudo $tool install $krnl)				|| exit 1
+fi
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
 
 if test "$tarb" != ""; then

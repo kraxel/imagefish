@@ -2,7 +2,7 @@
 
 name="rhel-73-efi"
 repo="repos/rhel-73.repo"
-rpms="kernel grub2-efi shim"
+rpms="grub2-efi shim"
 
 arch="$(uname -m)"
 tar="${name}-${arch}.tar.gz"
