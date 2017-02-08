@@ -14,8 +14,15 @@ conf=""
 ######################################################################
 # create work dir
 
+function msg() {
+	local txt="$1"
+	local bold="\x1b[1m"
+	local normal="\x1b[0m"
+	echo -e "${bold}### ${txt}${normal}"
+}
+
 function do_cleanup() {
-	echo "### cleaning up ..."
+	msg "cleaning up ..."
 #	sudo umount -v "$dest/dev"
 	sudo rm -rf "$WORK"
 }
@@ -151,12 +158,12 @@ mkdir -p ${dest}/{dev,proc,sys,mnt}
 inst=""
 for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done
-echo "### dnf install packages to $dest ..."
+msg "dnf install packages to $dest ..."
 #sudo mount --bind /dev $dest/dev
 #sudo mount -o remount,bind,ro $dest/dev
 (set -x; sudo $tool --quiet install $inst)				|| exit 1
 if test "$krnl" != ""; then
-	echo "### dnf install $krnl to $dest ..."
+	msg "dnf install $krnl to $dest ..."
 	(set -x; sudo $tool install $krnl)				|| exit 1
 fi
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
@@ -170,8 +177,8 @@ if test "$tarb" != ""; then
 	*)	topt=""
 		;;
 	esac
-	echo "### create tarball $tarb ..."
+	msg "create tarball $tarb ..."
 	(cd $dest; sudo tar --create $topt .) > "$tarb"
 fi
 
-echo "### all done."
+msg "all done."
