@@ -249,7 +249,7 @@ function fish_firmware_rpi64() {
 	gpu_mem=16
 	boot_delay=1
 EOF
-	fish cp-in	"$WORK/config.txt"		/boot/fw
+	fish copy-in	"$WORK/config.txt"		/boot/fw
 }
 
 function fish_extlinux_rpi() {
