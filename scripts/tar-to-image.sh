@@ -176,7 +176,7 @@ function fish_part_efi() {
 	fish mkdir			/boot
 	fish mount	/dev/sda2	/boot
 	fish mkdir			/boot/efi
-	fist mount	/dev/sda1	/boot/efi
+	fish mount	/dev/sda1	/boot/efi
 
 	cat <<-EOF > "$fstab"
 	LABEL=root	/		ext4	defaults	0 0
