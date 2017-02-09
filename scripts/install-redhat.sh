@@ -10,6 +10,7 @@ grps="core"
 rpms=""
 krnl="kernel"
 conf=""
+quiet="--quiet"
 
 ######################################################################
 # create work dir
@@ -91,6 +92,10 @@ while test "$1" != ""; do
 		allow_override="yes"
 		shift
 		;;
+	--verbose)
+		quiet=""
+		shift
+		;;
 	-h | --help)
 		print_help
 		exit 1
@@ -161,7 +166,7 @@ for item in $rpms; do inst="${inst} ${item}"; done
 msg "dnf install packages to $dest ..."
 #sudo mount --bind /dev $dest/dev
 #sudo mount -o remount,bind,ro $dest/dev
-(set -x; sudo $tool --quiet install $inst)				|| exit 1
+(set -x; sudo $tool $quiet install $inst)				|| exit 1
 if test "$krnl" != ""; then
 	msg "dnf install $krnl to $dest ..."
 	(set -x; sudo $tool install $krnl)				|| exit 1
