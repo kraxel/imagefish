@@ -202,7 +202,7 @@ EOF
 }
 
 function fish_part_rpi() {
-	fish_partition mbr 200 300 500
+	fish_partition mbr 64 384 512
 
 	fish part-set-bootable /dev/sda 2 true
 	fish part-set-mbr-id /dev/sda 1 0x0c
@@ -242,9 +242,18 @@ function fish_firmware_rpi64() {
 	msg "rpi 64bit firmware setup"
 	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/fw
 	fish cp	/usr/share/uboot/rpi_3/u-boot.bin	/boot/fw/rpi3-u-boot.bin
+
+	# HACK: config.txt from bcm283x-firmware.rpm works for 32bit only
+	cat <<EOF > "$WORK/config.txt"
+	init_uart_clock=48000000
+	gpu_mem=16
+	boot_delay=1
+EOF
+	fish cp-in	"$WORK/config.txt"		/boot/fw
 }
 
 function fish_extlinux_rpi() {
+	local subdir="$1"
 	local cmdline="ro root=LABEL=root console=ttyAMA0,115200 console=tty1"
 
 	msg "boot setup"
@@ -253,9 +262,6 @@ function fish_extlinux_rpi() {
 		| sed -e "s/vmlinuz-//")
 	echo "### kernel version is $kver"
 
-	echo "### add /boot/cmdline.txt (for kraxel kernel-main)"
-	fish write /boot/cmdline.txt "$cmdline"
-
 	echo "### creating extlinux.conf"
 	cat <<-EOF >> "$WORK/extlinux.conf"
 	menu title Fedora boot menu
@@ -263,13 +269,25 @@ function fish_extlinux_rpi() {
 	label Fedora (${kver})
 	  kernel /vmlinuz-${kver}
 	  append ${cmdline}
-	  fdtdir /dtb-${kver}/
+	  fdtdir /dtb-${kver}/${subdir}
 	  initrd /initramfs-${kver}.img
 EOF
 	fish copy-in "$WORK/extlinux.conf" /boot/extlinux
 
 	echo "### rebuilding initramfs"
 	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
+
+	# HACK: kraxel's kernel-main.rpm scripts look at this
+	echo "### add /boot/cmdline.txt"
+	fish write /boot/cmdline.txt "$cmdline"
+
+	# HACK: 64bit u-boot can't deal with compressed (gzip) kernels.
+	# WARN: kernel updates do NOT "just work" b/c of this.
+	if test "$subdir" != ""; then
+		echo "### HACK ALERT: gunzip 64bit kernel"
+		fish mv /boot/vmlinuz-${kver} /boot/vmlinuz-${kver}.gz
+		fich command "gunzip /boot/vmlinuz-${kver}.gz"
+	fi
 }
 
 ######################################################################
@@ -294,14 +312,14 @@ rpi32)
 	fish_part_rpi
 	fish_copy_tar
 	fish_firmware_rpi32
-	fish_extlinux_rpi
+	fish_extlinux_rpi ""
 	;;
 rpi64)
 	fish_init
 	fish_part_rpi
 	fish_copy_tar
 	fish_firmware_rpi64
-	fish_extlinux_rpi
+	fish_extlinux_rpi "broadcom/"
 	;;
 *)
 	# should not happen
