@@ -1,5 +1,6 @@
 [mkimage-fedora-25-server]
 baseurl=http://spunk.home.kraxel.org/mirror/fedora/rsync/f25-release/Server/$basearch/os/
+cost=90
 
 [mkimage-fedora-25-everything]
 baseurl=http://ftp.halifax.rwth-aachen.de/fedora/linux/releases/25/Everything/$basearch/os/
