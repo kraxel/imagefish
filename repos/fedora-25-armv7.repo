@@ -4,3 +4,6 @@ baseurl=http://spunk.home.kraxel.org/mirror/fedora/rsync/f25-release/Server/$bas
 [mkimage-fedora-25-kraxel]
 baseurl=http://spunk.home.kraxel.org/mockify/jenkins/fedora-ko-25-$basearch/
 
+[mkimage-fedora-25-kraxel-rpi2]
+baseurl=http://spunk.home.kraxel.org/mockify/repos/rpi2/
+
