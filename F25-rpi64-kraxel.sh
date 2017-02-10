@@ -8,6 +8,12 @@ krnl="kernel-main"
 arch="$(uname -m)"
 tar="${name}-${arch}.tar.gz"
 img="${name}-${arch}.raw"
+
+echo ""
+echo "###"
+echo "### $name"
+echo "###"
+
 set -ex
 rm -f "$tar" "$img"
 scripts/install-redhat.sh --config "$repo" --tar "$tar" --packages "$rpms" --kernel "$krnl" --dnf 
