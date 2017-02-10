@@ -205,7 +205,7 @@ function fish_grub2_efi() {
 	GRUB_CMDLINE_LINUX="ro root=${rootfs)"
 EOF
 
-	msg "create grub2 boot loader config (root=${rootfs))"
+	msg "create grub2 boot loader config (root=${rootfs})"
 	fish copy-in	$grubdef /etc/default
 	fish command "grub2-mkconfig -o /etc/grub2-efi.cfg"
 	fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
