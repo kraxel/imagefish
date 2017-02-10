@@ -265,10 +265,10 @@ function fish_firmware_rpi32() {
 function fish_firmware_rpi64() {
 	msg "rpi 64bit firmware setup"
 	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/fw
-	fish cp	/usr/share/uboot/rpi_3/u-boot.bin	/boot/fw/rpi3-u-boot.bin
+	fish cp	/usr/share/uboot/rpi_3/u-boot.bin	/boot/fw/kernel8.img
 
 	# HACK: config.txt from bcm283x-firmware.rpm works for 32bit only
-	cat <<EOF > "$WORK/config.txt"
+	cat <<-EOF > "$WORK/config.txt"
 	init_uart_clock=48000000
 	gpu_mem=16
 	boot_delay=1
