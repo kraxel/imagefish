@@ -212,7 +212,7 @@ function fish_part_rpi() {
 	fish part-set-mbr-id /dev/sda 4 0x83
 
 	msg "creating filesystems"
-	fish mkfs fat	/dev/sda1	label:firmware
+	fish mkfs fat	/dev/sda1	label:firm
 	fish mkfs ext2	/dev/sda2	label:boot
 	fish mkswap	/dev/sda3	label:swap
 	fish mkfs ext4	/dev/sda4	label:root
@@ -227,7 +227,7 @@ function fish_part_rpi() {
 	cat <<-EOF > "$fstab"
 	LABEL=root	/		ext4	defaults	0 0
 	LABEL=boot	/boot		ext2	defaults	0 0
-	LABEL=firmware	/boot/fw	vfat	ro		0 0
+	LABEL=firm	/boot/fw	vfat	ro		0 0
 	LABEL=swap	swap		swap	defaults	0 0
 EOF
 }
