@@ -28,11 +28,15 @@ nilsson)
 esac
 
 if test -d "$HOME/repo/images-testing"; then
-	# compress images
+	echo "# rsync uncompressed images"
+	rsync --verbose --progress \
+		*.raw *.qcow2 $HOME/repo/images-testing
+
+	echo "# compress images"
 	rm -f *.xz
 	xz --verbose --keep *.raw *.qcow2
 
-	# store images
+	echo "# rsync compressed images"
 	rsync --verbose --progress \
-		*.raw *.qcow2 *.xz $HOME/repo/images-testing
+		*.xz $HOME/repo/images-testing
 fi
