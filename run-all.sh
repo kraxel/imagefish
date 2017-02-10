@@ -16,16 +16,22 @@ arm-b64)
 	./F25-rpi64.sh		|| exit 1
 	./F25-efi.sh		|| exit 1
 	;;
+nilsson)
+	# rebuild images
+	./RHEL73-efi.sh		|| exit 1
+	;;
 *)
 	echo "unknown host, don't know what to do"
 	exit 1
 	;;
 esac
 
-# compress images
-rm -f *.xz
-xz --verbose --keep *.raw *.qcow2
+if test -d "$HOME/repo/images-testing"; then
+	# compress images
+	rm -f *.xz
+	xz --verbose --keep *.raw *.qcow2
 
-# store images
-rsync --verbose --progress \
-	*.raw *.qcow2 *.xz $HOME/repo/images-testing
+	# store images
+	rsync --verbose --progress \
+		*.raw *.qcow2 *.xz $HOME/repo/images-testing
+fi
