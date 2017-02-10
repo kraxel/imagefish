@@ -32,6 +32,8 @@ WORK="${TMPDIR-/var/tmp}/${0##*/}-$$"
 mkdir "$WORK" || exit 1
 trap 'do_cleanup' EXIT
 
+BASE="$(dirname $0)"
+
 ######################################################################
 # parse args
 
@@ -160,6 +162,7 @@ yum)
 esac
 
 mkdir -p ${dest}/{dev,proc,sys,mnt}
+$BASE/makedev.sh "${dest}/dev"
 inst=""
 for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done
