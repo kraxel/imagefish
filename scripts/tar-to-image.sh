@@ -202,7 +202,7 @@ function fish_grub2_efi() {
 	GRUB_TERMINAL_OUTPUT="console"
 	GRUB_DISABLE_SUBMENU="true"
 	GRUB_DISABLE_RECOVERY="true"
-	GRUB_CMDLINE_LINUX="ro root=${rootfs)"
+	GRUB_CMDLINE_LINUX="ro root=${rootfs}"
 EOF
 
 	msg "create grub2 boot loader config (root=${rootfs})"
