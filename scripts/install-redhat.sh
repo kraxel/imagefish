@@ -162,7 +162,7 @@ yum)
 esac
 
 mkdir -p ${dest}/{dev,proc,sys,mnt}
-$BASE/makedev.sh "${dest}/dev"
+sudo "$BASE/makedev.sh" "${dest}/dev"
 inst=""
 for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done

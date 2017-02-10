@@ -35,6 +35,9 @@ script="$WORK/imagefish.script"
 fstab="$WORK/fstab"
 grubdef="$WORK/grub"
 
+# variables
+rootfs=""
+
 ######################################################################
 # parse args
 
@@ -159,6 +162,7 @@ function fish_copy_tar() {
 
 function fish_part_efi() {
 	local uuid_efi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
+	local id_uefi id_boot id_swap id_root
 
 	fish_partition gpt 64 384 512
 
@@ -171,6 +175,12 @@ function fish_part_efi() {
 	fish mkswap	/dev/sda3	label:swap
 	fish mkfs ext4	/dev/sda4	label:root
 
+	id_uefi=$(guestfish --remote -- vfs-uuid /dev/sda1)
+	id_boot=$(guestfish --remote -- vfs-uuid /dev/sda2)
+	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda3)
+	id_root=$(guestfish --remote -- vfs-uuid /dev/sda4)
+	rootfs="UUID=${id_root}"
+
 	msg "mounting filesystems"
 	fish mount	/dev/sda4	/
 	fish mkdir			/boot
@@ -179,10 +189,10 @@ function fish_part_efi() {
 	fish mount	/dev/sda1	/boot/efi
 
 	cat <<-EOF > "$fstab"
-	LABEL=root	/		ext4	defaults	0 0
-	LABEL=boot	/boot		ext2	defaults	0 0
-	LABEL=UEFI	/boot/efi	vfat	defaults	0 0
-	LABEL=swap	swap		swap	defaults	0 0
+	UUID=${id_root}	/		ext4	defaults	0 0
+	UUID=${id_boot}	/boot		ext2	defaults	0 0
+	UUID=${id_uefi}	/boot/efi	vfat	defaults	0 0
+	UUID=${id_swap}	swap		swap	defaults	0 0
 EOF
 }
 
@@ -192,10 +202,10 @@ function fish_grub2_efi() {
 	GRUB_TERMINAL_OUTPUT="console"
 	GRUB_DISABLE_SUBMENU="true"
 	GRUB_DISABLE_RECOVERY="true"
-	GRUB_CMDLINE_LINUX="ro root=LABEL=root"
+	GRUB_CMDLINE_LINUX="ro root=${rootfs)"
 EOF
 
-	msg "create grub2 boot loader config"
+	msg "create grub2 boot loader config (root=${rootfs))"
 	fish copy-in	$grubdef /etc/default
 	fish command "grub2-mkconfig -o /etc/grub2-efi.cfg"
 	fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
@@ -203,6 +213,7 @@ EOF
 }
 
 function fish_part_rpi() {
+	local id_firm id_boot id_swap id_root
 	fish_partition mbr 64 384 512
 
 	fish part-set-bootable /dev/sda 2 true
@@ -217,6 +228,13 @@ function fish_part_rpi() {
 	fish mkswap	/dev/sda3	label:swap
 	fish mkfs ext4	/dev/sda4	label:root
 
+	id_firm=$(guestfish --remote -- vfs-uuid /dev/sda1)
+	id_boot=$(guestfish --remote -- vfs-uuid /dev/sda2)
+	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda3)
+	id_root=$(guestfish --remote -- vfs-uuid /dev/sda4)
+	rootfs="LABEL=root"
+	#rootfs="UUID=${id_root}"
+
 	msg "mounting filesystems"
 	fish mount	/dev/sda4	/
 	fish mkdir			/boot
@@ -229,6 +247,11 @@ function fish_part_rpi() {
 	LABEL=boot	/boot		ext2	defaults	0 0
 	LABEL=firm	/boot/fw	vfat	ro		0 0
 	LABEL=swap	swap		swap	defaults	0 0
+
+	#UUID=${id_root}	/		ext4	defaults	0 0
+	#UUID=${id_boot}	/boot		ext2	defaults	0 0
+	#UUID=${id_firm}	/boot/fw	vfat	ro		0 0
+	#UUID=${id_swap}	swap		swap	defaults	0 0
 EOF
 }
 
@@ -254,10 +277,10 @@ EOF
 }
 
 function fish_extlinux_rpi32() {
-	local cmdline="ro root=LABEL=root console=ttyAMA0,115200 console=tty1"
+	local cmdline="ro root=${rootfs} console=ttyAMA0,115200 console=tty1"
 	local kver
 
-	msg "boot setup"
+	msg "boot setup (root=${rootfs})"
 	kver=$(guestfish --remote -- ls /boot \
 		| grep -e "^vmlinuz-" | grep -v rescue \
 		| sed -e "s/vmlinuz-//")
@@ -284,10 +307,10 @@ EOF
 }
 
 function fish_extlinux_rpi64() {
-	local cmdline="ro root=LABEL=root console=ttyAMA0,115200 console=tty1"
+	local cmdline="ro root=${rootfs} console=ttyAMA0,115200 console=tty1"
 	local kernel kver
 
-	msg "boot setup"
+	msg "boot setup (root=${rootfs})"
 	kernel=$(guestfish --remote -- ls /boot \
 		| grep -e "^vmlinu[xz]-" | grep -v rescue)
 	echo "### kernel image is $kernel"
