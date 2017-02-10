@@ -318,7 +318,7 @@ EOF
 	vmlinuz-*)
 		echo "### HACK ALERT: gunzip 64bit kernel"
 		fish command "zcat /boot/vmlinuz-${kver} > /boot/vmlinux-${kver}"
-	fi
+	esac
 }
 
 ######################################################################
