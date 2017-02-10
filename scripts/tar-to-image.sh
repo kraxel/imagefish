@@ -197,6 +197,16 @@ EOF
 }
 
 function fish_grub2_efi() {
+	msg "boot setup (root=${rootfs})"
+	kver=$(guestfish --remote -- ls /boot \
+		| grep -e "^vmlinuz-" | grep -v rescue \
+		| sed -e "s/vmlinuz-//")
+	echo "### kernel version is $kver"
+
+	echo "### rebuilding initramfs"
+	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
+
+	echo "### create grub2 boot loader config"
 	cat <<-EOF > "$grubdef"
 	GRUB_TIMEOUT="5"
 	GRUB_TERMINAL_OUTPUT="console"
@@ -204,9 +214,7 @@ function fish_grub2_efi() {
 	GRUB_DISABLE_RECOVERY="true"
 	GRUB_CMDLINE_LINUX="ro root=${rootfs}"
 EOF
-
-	msg "create grub2 boot loader config (root=${rootfs})"
-	fish copy-in	$grubdef /etc/default
+	fish copy-in $grubdef /etc/default
 	fish command "grub2-mkconfig -o /etc/grub2-efi.cfg"
 	fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
 	fish command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"

@@ -172,7 +172,7 @@ msg "dnf install packages to $dest ..."
 (set -x; sudo $tool $quiet install $inst)				|| exit 1
 if test "$krnl" != ""; then
 	msg "dnf install $krnl to $dest ..."
-	(set -x; sudo $tool install $krnl)				|| exit 1
+	(set -x; sudo $tool $quiet install $krnl)			|| exit 1
 fi
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
 
