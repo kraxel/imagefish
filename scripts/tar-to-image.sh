@@ -160,7 +160,7 @@ function fish_copy_tar() {
 function fish_part_efi() {
 	local uuid_efi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
 
-	fish_partition gpt 200 300 500
+	fish_partition gpt 64 384 512
 
 	fish part-set-gpt-type /dev/sda 1 ${uuid_efi}
 	fish part-set-bootable /dev/sda 1 true
@@ -189,9 +189,10 @@ EOF
 function fish_grub2_efi() {
 	cat <<-EOF > "$grubdef"
 	GRUB_TIMEOUT="5"
+	GRUB_TERMINAL_OUTPUT="console"
 	GRUB_DISABLE_SUBMENU="true"
 	GRUB_DISABLE_RECOVERY="true"
-	#GRUB_CMDLINE_LINUX="root=LABEL=root"
+	GRUB_CMDLINE_LINUX="ro root=LABEL=root"
 EOF
 
 	msg "create grub2 boot loader config"
