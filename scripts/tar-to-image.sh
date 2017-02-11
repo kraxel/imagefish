@@ -215,7 +215,7 @@ function fish_grub2_efi() {
 	GRUB_CMDLINE_LINUX="ro root=${rootfs}"
 EOF
 	fish copy-in $grubdef /etc/default
-	fish command "grub2-mkconfig -o /etc/grub2-efi.cfg"
+	fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
 	fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
 	fish command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"
 }
