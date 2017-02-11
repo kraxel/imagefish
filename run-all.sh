@@ -28,6 +28,7 @@ nilsson)
 esac
 
 if test -d "$HOME/repo/images-testing"; then
+	echo
 	echo "# rsync uncompressed images"
 	rsync --verbose --progress \
 		*.raw *.qcow2 $HOME/repo/images-testing
