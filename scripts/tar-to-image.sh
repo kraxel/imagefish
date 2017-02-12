@@ -254,7 +254,7 @@ function fish_part_rpi() {
 	LABEL=root	/		ext4	defaults	0 0
 	LABEL=boot	/boot		ext2	defaults	0 0
 	LABEL=firm	/boot/fw	vfat	ro		0 0
-	LABEL=swap	swap		swap	defaults	0 0
+	#LABEL=swap	swap		swap	defaults	0 0
 
 	#UUID=${id_root}	/		ext4	defaults	0 0
 	#UUID=${id_boot}	/boot		ext2	defaults	0 0
