@@ -1,7 +1,7 @@
 #!/bin/sh
 image="$1"
 passwd="$2"
-if test "$image" = "" -o "$passwd" = ""; then
+if test "$image" = ""; then
 	echo "usage: $0 <image> <root-password>"
 	exit 1
 fi
