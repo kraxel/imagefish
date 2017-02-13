@@ -174,8 +174,9 @@ if test "$krnl" != ""; then
 	msg "dnf install $krnl to $dest ..."
 	(set -x; sudo $tool $quiet install $krnl)			|| exit 1
 	if test ! -f ${dest}/etc/sysconfig/kernel; then
-		echo "UPDATEDEFAULT=yes"		>  ${dest}/etc/sysconfig/kernel
-		echo "DEFAULTKERNEL=kernel-core"	>> ${dest}/etc/sysconfig/kernel
+		echo "UPDATEDEFAULT=yes"		>  $WORK/sys-kernel
+		echo "DEFAULTKERNEL=kernel-core"	>> $WORK/sys-kernel
+		sudo cp $WORK/sys-kernel ${dest}/etc/sysconfig/kernel
 	fi
 fi
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
