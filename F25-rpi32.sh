@@ -18,3 +18,5 @@ set -ex
 rm -f "$tar" "$img"
 scripts/install-redhat.sh --config "$repo" --tar "$tar" --packages "$rpms" --kernel "$krnl" --dnf 
 scripts/tar-to-image.sh --tar "$tar" --image "$img" --rpi32
+scripts/config-systemd-network.sh "$img"
+scripts/config-kraxel-repo.sh "$img"

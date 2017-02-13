@@ -7,7 +7,7 @@ if test "$image" = ""; then
 fi
 if test "$arch" = ""; then
 	arch="$(uname -m)"
-	echo "# no arch given, using native ($arch)"
+	echo "# ${0##*/}: no arch given, using native ($arch)"
 fi
 
 WORK="${TMPDIR-/tmp}/${0##*/}-$$"
