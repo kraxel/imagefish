@@ -35,7 +35,7 @@ link /run/systemd/resolve/resolv.conf:/etc/resolv.conf
 
 # configure networking
 mkdir /etc/systemd/network
-copy-in $WORK/ethernet.network /etc/systemd/network
+copy-in $WORK/ethernet.network:/etc/systemd/network
 
 # turn on timesync
 link /usr/lib/systemd/system/systemd-timesyncd.service:/etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service
