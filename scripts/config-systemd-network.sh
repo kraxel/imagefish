@@ -26,19 +26,26 @@ delete /etc/systemd/system/multi-user.target.wants/NetworkManager.service
 delete /etc/systemd/system/dbus-org.freedesktop.NetworkManager.service
 delete /etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service
 
+# create dirs
+mkdir /etc/systemd/network
+mkdir /etc/systemd/system/multi-user.target.wants
+mkdir /etc/systemd/system/sockets.target.wants
+mkdir /etc/systemd/system/sysinit.target.wants
+
 # turn on systemd networking
 link /usr/lib/systemd/system/systemd-networkd.service:/etc/systemd/system/multi-user.target.wants/systemd-networkd.service
 link /usr/lib/systemd/system/systemd-networkd.socket:/etc/systemd/system/sockets.target.wants/systemd-networkd.socket
 link /usr/lib/systemd/system/systemd-resolved.service:/etc/systemd/system/multi-user.target.wants/systemd-resolved.service
+
+# turn on systemd timesyncd
+link /usr/lib/systemd/system/systemd-timesyncd.service:/etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service
+
+# symlink resolv.conf
 delete /etc/resolv.conf
 link /run/systemd/resolve/resolv.conf:/etc/resolv.conf
 
 # configure networking
-mkdir /etc/systemd/network
 copy-in $WORK/ethernet.network:/etc/systemd/network
-
-# turn on timesync
-link /usr/lib/systemd/system/systemd-timesyncd.service:/etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service
 
 EOF
 
