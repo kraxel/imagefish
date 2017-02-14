@@ -6,4 +6,4 @@ if test "$image" = "" -o "$passwd" = ""; then
 	exit 1
 fi
 set -ex
-virt-customize -a "$image" --root-password "password:$passwd"
+virt-customize -a "$image" --no-network --root-password "password:$passwd"

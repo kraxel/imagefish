@@ -7,5 +7,6 @@ if test "$image" = ""; then
 fi
 set -ex
 virt-customize -a "$image"		\
+	--no-network			\
 	--timezone "Europe/Berlin"	\
 	--write "/etc/vconsole.conf:KEYMAP=de-nodeadkeys"

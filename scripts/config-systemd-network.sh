@@ -50,4 +50,4 @@ copy-in $WORK/ethernet.network:/etc/systemd/network
 EOF
 
 set -ex
-virt-customize -a "$image" --commands-from-file "$WORK/script"
+virt-customize -a "$image" --no-network --commands-from-file "$WORK/script"
