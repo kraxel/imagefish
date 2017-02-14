@@ -134,6 +134,10 @@ function fish_init() {
 	fish run
 }
 
+function fish_fini() {
+	fish umount-all
+}
+
 function fish_partition() {
 	local ptype="$1"
 	local szfirm="$2"
@@ -370,6 +374,7 @@ efi)
 	fish_part_efi
 	fish_copy_tar
 	fish_grub2_efi
+	fish_fini
 	;;
 rpi32)
 	fish_init
@@ -377,6 +382,7 @@ rpi32)
 	fish_copy_tar
 	fish_firmware_rpi32
 	fish_extlinux_rpi32
+	fish_fini
 	;;
 rpi64)
 	fish_init
@@ -384,6 +390,7 @@ rpi64)
 	fish_copy_tar
 	fish_firmware_rpi64
 	fish_extlinux_rpi64
+	fish_fini
 	;;
 *)
 	# should not happen
