@@ -6,9 +6,9 @@ cost=90
 baseurl=http://ftp.halifax.rwth-aachen.de/fedora/linux/releases/25/Everything/$basearch/os/
 proxy=http://spunk.home.kraxel.org:3128
 
-#[mkimage-fedora-25-updates]
-#baseurl=http://ftp.halifax.rwth-aachen.de/fedora/linux/updates/25/$basearch/
-#proxy=http://spunk.home.kraxel.org:3128
+[mkimage-fedora-25-updates]
+baseurl=http://ftp.halifax.rwth-aachen.de/fedora/linux/updates/25/$basearch/
+proxy=http://spunk.home.kraxel.org:3128
 
 [mkimage-fedora-25-kraxel]
 baseurl=http://spunk.home.kraxel.org/mockify/jenkins/fedora-ko-25-$basearch/

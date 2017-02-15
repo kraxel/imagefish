@@ -2,7 +2,7 @@
 
 name="fedora-25-efi"
 repo="repos/fedora-25-armv7.repo"
-rpms="grub2-efi kraxel.org"
+rpms="grub2-efi"
 
 arch="$(uname -m)"
 tar="${name}-${arch}.tar.gz"
