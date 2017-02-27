@@ -17,12 +17,12 @@ arm-b64)
 	# rebuild images
 	./F25-rpi64-fedora.sh	|| exit 1
 	./F25-rpi64-kraxel.sh	|| exit 1
-	./F25-efi.sh		|| exit 1
+	./F25-efi-grub2.sh	|| exit 1
 	;;
 nilsson)
 	# rebuild images
 	./RHEL73-efi.sh		|| exit 1
-	./F25-efi.sh		|| exit 1
+	./F25-efi-grub2.sh	|| exit 1
 	;;
 *)
 	echo "unknown host, don't know what to do"
