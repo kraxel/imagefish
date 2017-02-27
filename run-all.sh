@@ -23,6 +23,7 @@ nilsson)
 	# rebuild images
 	./RHEL73-efi.sh		|| exit 1
 	./F25-efi-grub2.sh	|| exit 1
+	./F25-efi-systemd.sh	|| exit 1
 	;;
 *)
 	echo "unknown host, don't know what to do"

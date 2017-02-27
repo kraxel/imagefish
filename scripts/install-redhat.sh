@@ -174,15 +174,11 @@ for item in $rpms; do inst="${inst} ${item}"; done
 msg "dnf install packages to $dest ..."
 #sudo mount --bind /dev $dest/dev
 #sudo mount -o remount,bind,ro $dest/dev
-(set -x; sudo $tool $quiet install $inst $krnl)				|| exit 1
-if test "$krnl" != ""; then
-#	msg "dnf install $krnl to $dest ..."
-#	(set -x; sudo $tool $quiet install $krnl)			|| exit 1
-	if test ! -f ${dest}/etc/sysconfig/kernel; then
-		echo "UPDATEDEFAULT=yes"		>  $WORK/sys-kernel
-		echo "DEFAULTKERNEL=kernel-core"	>> $WORK/sys-kernel
-		sudo cp $WORK/sys-kernel ${dest}/etc/sysconfig/kernel
-	fi
+(set -x; sudo $tool $quiet install -- $inst $krnl)			|| exit 1
+if test ! -f ${dest}/etc/sysconfig/kernel; then
+	echo "UPDATEDEFAULT=yes"		>  $WORK/sys-kernel
+	echo "DEFAULTKERNEL=kernel-core"	>> $WORK/sys-kernel
+	sudo cp $WORK/sys-kernel ${dest}/etc/sysconfig/kernel
 fi
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
 

@@ -74,6 +74,10 @@ while test "$1" != ""; do
 		mode="efi-grub2"
 		shift
 		;;
+	--efi-systemd)
+		mode="efi-systemd"
+		shift
+		;;
 	--rpi32)
 		mode="rpi32"
 		shift
@@ -222,6 +226,51 @@ EOF
 	fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
 	fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
 	fish command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"
+}
+
+function fish_part_efi_systemd() {
+	local uuid_efi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
+	local id_uefi id_swap id_root
+
+	fish_partition gpt 512 0 512
+
+	fish part-set-gpt-type /dev/sda 1 ${uuid_efi}
+	fish part-set-bootable /dev/sda 1 true
+
+	msg "creating filesystems"
+	fish mkfs fat	/dev/sda1	label:UEFI
+	fish mkswap	/dev/sda2	label:swap
+	fish mkfs ext4	/dev/sda3	label:root
+
+	id_uefi=$(guestfish --remote -- vfs-uuid /dev/sda1)
+	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda2)
+	id_root=$(guestfish --remote -- vfs-uuid /dev/sda3)
+	rootfs="UUID=${id_root}"
+
+	msg "mounting filesystems"
+	fish mount	/dev/sda3	/
+	fish mkdir			/boot
+	fish mount	/dev/sda1	/boot
+
+	cat <<-EOF > "$fstab"
+	UUID=${id_root}	/		ext4	defaults	0 0
+	UUID=${id_uefi}	/boot		vfat	defaults	0 0
+	UUID=${id_swap}	swap		swap	defaults	0 0
+EOF
+}
+
+function fish_systemd_boot() {
+	msg "boot setup (root=${rootfs})"
+	kver=$(guestfish --remote -- ls /lib/modules)
+	echo "### kernel version is $kver"
+
+	echo "### init systemd-boot"
+	fish write /etc/kernel/cmdline "ro root=${rootfs}"
+	fish command "bootctl install"
+	fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
+
+#	echo "### rebuilding initramfs"
+#	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
 }
 
 function fish_part_rpi() {
@@ -374,6 +423,13 @@ efi-grub2)
 	fish_part_efi_grub2
 	fish_copy_tar
 	fish_grub2_efi
+	fish_fini
+	;;
+efi-systemd)
+	fish_init
+	fish_part_efi_systemd
+	fish_copy_tar
+	fish_systemd_boot
 	fish_fini
 	;;
 rpi32)
