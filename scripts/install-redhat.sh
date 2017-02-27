@@ -82,6 +82,10 @@ while test "$1" != ""; do
 		conf="$2"
 		shift; shift
 		;;
+	-v | --verbose)
+		quiet=""
+		shift
+		;;
 	--dnf)
 		tool="dnf"
 		shift
@@ -92,10 +96,6 @@ while test "$1" != ""; do
 		;;
 	--force)
 		allow_override="yes"
-		shift
-		;;
-	--verbose)
-		quiet=""
 		shift
 		;;
 	-h | --help)
@@ -135,6 +135,11 @@ fi
 ######################################################################
 # go!
 
+if test "$tool" = "dnf" -a ! -x "$(which dnf 2>/dev/null)"; then
+	echo "WARNING: dnf not found, try fallback to yum"
+	tool="yum"
+fi
+
 case "$tool" in
 dnf)
 	tool="$tool -y --installroot ${dest}"
@@ -169,10 +174,10 @@ for item in $rpms; do inst="${inst} ${item}"; done
 msg "dnf install packages to $dest ..."
 #sudo mount --bind /dev $dest/dev
 #sudo mount -o remount,bind,ro $dest/dev
-(set -x; sudo $tool $quiet install $inst)				|| exit 1
+(set -x; sudo $tool $quiet install $inst $krnl)				|| exit 1
 if test "$krnl" != ""; then
-	msg "dnf install $krnl to $dest ..."
-	(set -x; sudo $tool $quiet install $krnl)			|| exit 1
+#	msg "dnf install $krnl to $dest ..."
+#	(set -x; sudo $tool $quiet install $krnl)			|| exit 1
 	if test ! -f ${dest}/etc/sysconfig/kernel; then
 		echo "UPDATEDEFAULT=yes"		>  $WORK/sys-kernel
 		echo "DEFAULTKERNEL=kernel-core"	>> $WORK/sys-kernel
