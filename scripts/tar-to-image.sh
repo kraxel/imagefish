@@ -6,7 +6,7 @@
 qcow=""
 size="4G"
 tarb=""
-mode="efi"
+mode="efi-grub2"
 
 ######################################################################
 # create work dir
@@ -50,7 +50,7 @@ options:
     --image <image>
     --size <size>                 (default: $size)
   mode:
-    --efi                         (default)
+    --efi-grub2                   (default)
     --rpi32
     --rpi64
 EOF
@@ -70,8 +70,8 @@ while test "$1" != ""; do
 		tarb="$2"
 		shift; shift
 		;;
-	--efi)
-		mode="efi"
+	--efi-grub2)
+		mode="efi-grub2"
 		shift
 		;;
 	--rpi32)
@@ -164,7 +164,7 @@ function fish_copy_tar() {
 	fish write /.autorelabel ""
 }
 
-function fish_part_efi() {
+function fish_part_efi_grub2() {
 	local uuid_efi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
 	local id_uefi id_boot id_swap id_root
 
@@ -369,9 +369,9 @@ if test "$GUESTFISH_PID" = ""; then
 fi
 
 case "$mode" in
-efi)
+efi-grub2)
 	fish_init
-	fish_part_efi
+	fish_part_efi_grub2
 	fish_copy_tar
 	fish_grub2_efi
 	fish_fini

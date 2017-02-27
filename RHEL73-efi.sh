@@ -16,4 +16,4 @@ echo "###"
 set -ex
 rm -f "$tar" "$img"
 scripts/install-redhat.sh --config "$repo" --tar "$tar" --packages "$rpms" --yum
-scripts/tar-to-image.sh --tar "$tar" --image "$img" --efi
+scripts/tar-to-image.sh --tar "$tar" --image "$img" --efi-grub2
