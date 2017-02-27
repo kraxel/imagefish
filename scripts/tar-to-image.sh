@@ -265,6 +265,7 @@ function fish_systemd_boot() {
 	echo "### kernel version is $kver"
 
 	echo "### init systemd-boot"
+	fish mkdir-p /etc/kernel
 	fish write /etc/kernel/cmdline "ro root=${rootfs}"
 	fish command "bootctl install"
 	fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"

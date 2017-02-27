@@ -2,7 +2,7 @@
 
 name="fedora-25-efi-grub2"
 repo="repos/fedora-25.repo"
-rpms="grub2-efi shim"
+rpms="grub2-efi shim -dracut-config-rescue"
 
 arch="$(uname -m)"
 tar="${name}-${arch}.tar.gz"

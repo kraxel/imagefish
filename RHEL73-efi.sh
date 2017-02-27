@@ -2,7 +2,7 @@
 
 name="rhel-73-efi"
 repo="repos/rhel-73.repo"
-rpms="grub2-efi shim"
+rpms="grub2-efi shim -dracut-config-rescue"
 
 arch="$(uname -m)"
 tar="${name}-${arch}.tar.gz"
