@@ -37,6 +37,7 @@ grubdef="$WORK/grub"
 
 # variables
 rootfs=""
+console=""
 
 ######################################################################
 # parse args
@@ -220,7 +221,7 @@ function fish_grub2_efi() {
 	GRUB_TERMINAL_OUTPUT="console"
 	GRUB_DISABLE_SUBMENU="true"
 	GRUB_DISABLE_RECOVERY="true"
-	GRUB_CMDLINE_LINUX="ro root=${rootfs}"
+	GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console}"
 EOF
 	fish copy-in $grubdef /etc/default
 	fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
@@ -266,7 +267,7 @@ function fish_systemd_boot() {
 
 	echo "### init systemd-boot"
 	fish mkdir-p /etc/kernel
-	fish write /etc/kernel/cmdline "ro root=${rootfs} console=ttyS0,115200 console=tty1"
+	fish write /etc/kernel/cmdline "ro root=${rootfs} ${console}"
 	fish command "bootctl install"
 	fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
 	fish command "sed -i -e '/timeout/s/^#//' /boot/loader/loader.conf"
@@ -337,7 +338,7 @@ EOF
 }
 
 function fish_extlinux_rpi32() {
-	local cmdline="ro root=${rootfs} console=ttyAMA0,115200 console=tty1"
+	local cmdline="ro root=${rootfs} ${console}"
 	local kver
 
 	msg "boot setup (root=${rootfs})"
@@ -367,7 +368,7 @@ EOF
 }
 
 function fish_extlinux_rpi64() {
-	local cmdline="ro root=${rootfs} console=ttyAMA0,115200 console=tty1"
+	local cmdline="ro root=${rootfs} ${console}"
 	local kernel kver
 
 	msg "boot setup (root=${rootfs})"
@@ -415,6 +416,15 @@ if test "$GUESTFISH_PID" = ""; then
 	echo "ERROR: starting guestfish failed"
 	exit 1
 fi
+
+case "$(uname -m)" in
+armv7* | aarch64
+	console="console=ttyAMA0,115200 console=tty1"
+	;;
+i?86 | x86_64)
+	console="console=ttyS0,115200 console=tty1"
+	;;
+esac
 
 case "$mode" in
 efi-grub2)
