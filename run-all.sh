@@ -23,6 +23,7 @@ nilsson)
 	# rebuild images
 	export IMAGEFISH_DESTDIR="/vmdisk/ext/imagefish"
 	./RHEL73-efi.sh		|| exit 1
+	./CentOS7-efi.sh	|| exit 1
 	./F25-efi-grub2.sh	|| exit 1
 	./F25-efi-systemd.sh	|| exit 1
 	;;

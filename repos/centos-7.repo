@@ -1,0 +1,8 @@
+[mkimage-centos-7-base]
+baseurl=http://mirror.centos.org/centos/7/os/$basearch/
+proxy=http://spunk.home.kraxel.org:3128
+
+[mkimage-centos-7-updates]
+baseurl=http://mirror.centos.org/centos/7/updates/$basearch/
+proxy=http://spunk.home.kraxel.org:3128
+
