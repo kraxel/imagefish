@@ -5,8 +5,8 @@ repo="repos/rhel-73.repo"
 rpms="grub2-efi shim -dracut-config-rescue"
 
 arch="$(uname -m)"
-tar="${name}-${arch}.tar.gz"
-img="${name}-${arch}.qcow2"
+tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"
+img="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.qcow2"
 
 echo ""
 echo "###"

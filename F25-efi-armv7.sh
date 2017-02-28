@@ -5,8 +5,8 @@ repo="repos/fedora-25-armv7.repo"
 rpms="grub2-efi"
 
 arch="$(uname -m)"
-tar="${name}-${arch}.tar.gz"
-img="${name}-${arch}.qcow2"
+tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"
+img="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.qcow2"
 
 echo ""
 echo "###"

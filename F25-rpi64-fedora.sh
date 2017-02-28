@@ -6,8 +6,8 @@ rpms="bcm283x-firmware uboot-images-armv8 extlinux-bootloader dracut-config-gene
 krnl="kernel kernel-modules"
 
 arch="$(uname -m)"
-tar="${name}-${arch}.tar.gz"
-img="${name}-${arch}.raw"
+tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"
+img="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.raw"
 
 echo ""
 echo "###"
