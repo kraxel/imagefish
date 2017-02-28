@@ -418,7 +418,7 @@ if test "$GUESTFISH_PID" = ""; then
 fi
 
 case "$(uname -m)" in
-armv7* | aarch64
+armv7* | aarch64)
 	console="console=ttyAMA0,115200 console=tty1"
 	;;
 i?86 | x86_64)
