@@ -269,9 +269,6 @@ function fish_systemd_boot() {
 	fish write /etc/kernel/cmdline "ro root=${rootfs} console=ttyS0,115200 console=tty1"
 	fish command "bootctl install"
 	fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
-
-#	echo "### rebuilding initramfs"
-#	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
 }
 
 function fish_part_rpi() {
