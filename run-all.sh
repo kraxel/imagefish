@@ -22,10 +22,12 @@ arm-b64)
 nilsson)
 	# rebuild images
 	export IMAGEFISH_DESTDIR="/vmdisk/ext/imagefish"
-	./RHEL73-efi.sh		|| exit 1
-	./CentOS7-efi.sh	|| exit 1
-	./F25-efi-grub2.sh	|| exit 1
-	./F25-efi-systemd.sh	|| exit 1
+	./RHEL73-efi.sh			|| exit 1
+	./CentOS7-efi.sh		|| exit 1
+	./F25-efi-grub2.sh		|| exit 1
+	./F25-efi-systemd.sh		|| exit 1
+	linux32 ./F25-efi-grub2.sh	|| exit 1
+	linux32 ./F25-efi-systemd.sh	|| exit 1
 	;;
 *)
 	echo "unknown host, don't know what to do"
