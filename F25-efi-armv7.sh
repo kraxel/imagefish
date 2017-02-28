@@ -2,7 +2,7 @@
 
 name="fedora-25-efi"
 repo="repos/fedora-25-armv7.repo"
-rpms="grub2-efi"
+rpms="grub2-efi -dracut-config-rescue dracut-config-generic"
 
 arch="$(uname -m)"
 tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"

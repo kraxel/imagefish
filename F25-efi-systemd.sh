@@ -2,7 +2,7 @@
 
 name="fedora-25-efi-systemd"
 repo="repos/fedora-25.repo"
-rpms="-grubby -dracut-config-rescue"
+rpms="-grubby -dracut-config-rescue dracut-config-generic"
 
 arch="$(uname -m)"
 tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"
