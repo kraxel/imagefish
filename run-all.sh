@@ -5,8 +5,8 @@ BASE="$(dirname $0)"
 case "$(hostname --short)" in
 cubietruck)
 	# quirks
-	export SUPERMIN_KERNEL=/boot/vmlinuz-4.9.5-200.fc25.armv7hl+lpae
-	export SUPERMIN_KERNEL_VERSION=4.9.5-200.fc25.armv7hl+lpae
+#	export SUPERMIN_KERNEL=/boot/vmlinuz-4.9.5-200.fc25.armv7hl+lpae
+#	export SUPERMIN_KERNEL_VERSION=4.9.5-200.fc25.armv7hl+lpae
 	rm -rf /var/tmp/.guestfs-500
 
 	# rebuild images
