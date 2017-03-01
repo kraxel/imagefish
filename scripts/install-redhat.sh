@@ -148,6 +148,7 @@ dnf)
 		tool="$tool --disablerepo=*"
 		tool="$tool --enablerepo=mkimage-*"
 	fi
+	inst=""
 	;;
 yum)
 	tool="$tool -y --installroot ${dest}"
@@ -158,6 +159,7 @@ yum)
 	# so we don't have to hop through enablerepo/disablerepo
 	# loops to disable the host repos
 	mkdir -p ${dest}/etc/yum.repos.d
+	inst="--"
 	;;
 *)
 	# should not happen
@@ -168,13 +170,12 @@ esac
 
 mkdir -p ${dest}/{dev,proc,sys,mnt}
 sudo "$BASE/makedev.sh" "${dest}/dev"
-inst=""
 for item in $grps; do inst="${inst} @${item}"; done
 for item in $rpms; do inst="${inst} ${item}"; done
 msg "dnf install packages to $dest ..."
 #sudo mount --bind /dev $dest/dev
 #sudo mount -o remount,bind,ro $dest/dev
-(set -x; sudo $tool $quiet install -- $inst $krnl)			|| exit 1
+(set -x; sudo $tool $quiet install $inst $krnl)			|| exit 1
 if test ! -f ${dest}/etc/sysconfig/kernel; then
 	echo "UPDATEDEFAULT=yes"		>  $WORK/sys-kernel
 	echo "DEFAULTKERNEL=kernel-core"	>> $WORK/sys-kernel
