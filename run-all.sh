@@ -18,6 +18,7 @@ arm-b64)
 	./F25-rpi64-fedora.sh	|| exit 1
 	./F25-rpi64-kraxel.sh	|| exit 1
 	./F25-efi-grub2.sh	|| exit 1
+	./F25-efi-systemd.sh	|| exit 1
 	;;
 nilsson)
 	# rebuild images
