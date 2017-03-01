@@ -149,6 +149,13 @@ dnf)
 		tool="$tool --enablerepo=mkimage-*"
 	fi
 	inst=""
+	for item in $grps; do inst="${inst} @${item}"; done
+	for item in $rpms; do
+		case "$item" in
+		-*)	inst="${inst} -x ${item#-}"	;;
+		*)	inst="${inst} ${item}"		;;
+		esac
+	done
 	;;
 yum)
 	tool="$tool -y --installroot ${dest}"
@@ -160,6 +167,8 @@ yum)
 	# loops to disable the host repos
 	mkdir -p ${dest}/etc/yum.repos.d
 	inst="--"
+	for item in $grps; do inst="${inst} @${item}"; done
+	for item in $rpms; do inst="${inst} ${item}"; done
 	;;
 *)
 	# should not happen
@@ -170,8 +179,6 @@ esac
 
 mkdir -p ${dest}/{dev,proc,sys,mnt}
 sudo "$BASE/makedev.sh" "${dest}/dev"
-for item in $grps; do inst="${inst} @${item}"; done
-for item in $rpms; do inst="${inst} ${item}"; done
 msg "dnf install packages to $dest ..."
 #sudo mount --bind /dev $dest/dev
 #sudo mount -o remount,bind,ro $dest/dev
