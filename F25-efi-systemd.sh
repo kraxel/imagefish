@@ -1,6 +1,6 @@
 #!/bin/sh
 
-name="fedora-25-efi"
+name="fedora-25-efi-systemd"
 repo="repos/fedora-25.repo"
 rpms="-grubby -dracut-config-rescue dracut-config-generic"
 
