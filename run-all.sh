@@ -3,7 +3,7 @@
 BASE="$(dirname $0)"
 
 case "$(hostname --short)" in
-cubietruck)
+arm-b32 | cubietruck)
 	# rebuild images
 	./F25-rpi32.sh		|| exit 1
 	./F25-efi-armv7.sh	|| exit 1
