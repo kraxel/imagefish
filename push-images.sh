@@ -1,12 +1,14 @@
 #!/bin/sh
 
-if test -d "$HOME/repo/images-testing"; then
+dest="$HOME/repo/images-testing"
+
+if test -d "$dest"; then
 	echo
 	echo "# rsync uncompressed images"
 	rsync --verbose --progress		\
 		${IMAGEFISH_DESTDIR-.}/*.raw	\
 		${IMAGEFISH_DESTDIR-.}/*.qcow2	\
-		$HOME/repo/images-testing
+		$dest
 
 	echo
 	echo "# compress images"
@@ -19,5 +21,5 @@ if test -d "$HOME/repo/images-testing"; then
 	echo "# rsync compressed images"
 	rsync --verbose --progress		\
 		${IMAGEFISH_DESTDIR-.}/*.xz	\
-		$HOME/repo/images-testing
+		$dest
 fi
