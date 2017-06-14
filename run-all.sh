@@ -25,6 +25,11 @@ nilsson)
 	linux32 ./F25-efi-grub2.sh	|| exit 1
 	linux32 ./F25-efi-systemd.sh	|| exit 1
 	;;
+sirius)
+	# rebuild images
+	export IMAGEFISH_DESTDIR="/vmdisk/hdd/imagefish"
+	./RHEL73-efi.sh			|| exit 1
+	;;
 *)
 	echo "unknown host, don't know what to do"
 	exit 1
