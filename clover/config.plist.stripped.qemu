@@ -15,14 +15,6 @@
 		<key>Timeout</key>
 		<integer>3</integer>
 	</dict>
-	<key>Devices</key>
-	<dict>
-		<key>FakeID</key>
-		<dict>
-			<key>XHCI</key>
-			<string>0x0</string>
-		</dict>
-	</dict>
 	<key>GUI</key>
 	<dict>
 		<key>Scan</key>
