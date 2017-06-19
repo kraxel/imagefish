@@ -1,9 +1,13 @@
 #!/bin/sh
 
+# args
+match="$1"
+
+# config
 src="/vmdisk/hdd/pool-iso"
 dst="/vmdisk/hdd/pool-disk"
 
-iso="$(ls -t $src/Clover-*-X64.iso | head -1)"
+iso="$(ls -t $src/Clover-*${match}*-X64.iso | head -1)"
 img="${dst}${iso#$src}"
 img="${img%.iso}.qcow2"
 
