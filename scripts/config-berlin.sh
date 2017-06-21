@@ -1,6 +1,5 @@
 #!/bin/sh
 image="$1"
-passwd="$2"
 if test "$image" = ""; then
 	echo "usage: $0 <image>"
 	exit 1
