@@ -24,9 +24,10 @@ The most interesting stuff is in the `scripts/` directory.
  * various `config-*.sh` scripts can configure images (third step).
 
 The `repos/` directory has yum/dnf config files for various distros.
-They will *not* work out of the box for you as they are tweaked for my
-home network.  They use either the mirror or the cachine proxy running
-on my local server box.
+They will _not- work out of the box for you as they are tweaked for my
+home network.  They use either the mirror or the caching proxy running
+on my local server box.  When fiddeling with this take care to keep
+the `mkimage-` prefix for the repo names.
 
 The short scripts in the root directory call the scripts in `scripts/`
 with different parameters to create different images.
