@@ -28,10 +28,15 @@ nilsson)
 sirius)
 	# rebuild images
 	export IMAGEFISH_DESTDIR="/vmdisk/hdd/imagefish"
-#	./RHEL73-efi.sh			|| exit 1
+	./RHEL73-efi.sh			|| exit 1
+	./CentOS7-efi.sh		|| exit 1
+
+#	linux32 ./Fedora-efi-grub2.sh	|| exit 1
 #	./Fedora-efi-grub2.sh	25	|| exit 1
+	./Fedora-efi-grub2.sh	26	|| exit 1
+
+	linux32 ./Fedora-efi-systemd.sh	|| exit 1
 	./Fedora-efi-systemd.sh	25	|| exit 1
-#	./Fedora-efi-grub2.sh	26	|| exit 1
 	./Fedora-efi-systemd.sh	26	|| exit 1
 	;;
 *)
