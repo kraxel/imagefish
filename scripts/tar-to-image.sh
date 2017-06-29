@@ -121,13 +121,13 @@ fi
 # uuids
 
 uuid_gpt_efi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
-uuid_gpi_swap="0657fd6d-a4ab-43c4-84e5-0933c84b4f4f"
-uuid_gpi_root="FIXME"
+uuid_gpt_swap="0657fd6d-a4ab-43c4-84e5-0933c84b4f4f"
+uuid_gpt_root="FIXME"
 
-uuid_gpi_root_ia32="44479540-f297-41b2-9af7-d131d5f0458a"
-uuid_gpi_root_x64="4f68bce3-e8cd-4db1-96e7-fbcaf984b709"
-uuid_gpi_root_arm="69dad710-2ce4-4e3c-b16c-21a1d49abed3"
-uuid_gpi_root_a64="b921b045-1df0-41c3-af44-4c6f280d3fae"
+uuid_gpt_root_ia32="44479540-f297-41b2-9af7-d131d5f0458a"
+uuid_gpt_root_x64="4f68bce3-e8cd-4db1-96e7-fbcaf984b709"
+uuid_gpt_root_arm="69dad710-2ce4-4e3c-b16c-21a1d49abed3"
+uuid_gpt_root_a64="b921b045-1df0-41c3-af44-4c6f280d3fae"
 
 ######################################################################
 # guestfish script helpers
@@ -434,19 +434,19 @@ fi
 case "$(uname -m)" in
 armv7*)
 	console="console=ttyAMA0,115200 console=tty1"
-	uuid_gpi_root="$uuid_gpi_root_arm"
+	uuid_gpt_root="$uuid_gpt_root_arm"
 	;;
 aarch64)
 	console="console=ttyAMA0,115200 console=tty1"
-	uuid_gpi_root="$uuid_gpi_root_a64"
+	uuid_gpt_root="$uuid_gpt_root_a64"
 	;;
 i?86)
 	console="console=ttyS0,115200 console=tty1"
-	uuid_gpi_root="$uuid_gpi_root_ia32"
+	uuid_gpt_root="$uuid_gpt_root_ia32"
 	;;
 x86_64)
 	console="console=ttyS0,115200 console=tty1"
-	uuid_gpi_root="$uuid_gpi_root_x64"
+	uuid_gpt_root="$uuid_gpt_root_x64"
 	;;
 esac
 
