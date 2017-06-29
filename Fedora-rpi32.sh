@@ -1,7 +1,8 @@
 #!/bin/sh
 
-name="fedora-25-rpi2"
-repo="repos/fedora-25.repo"
+vers="${1-25}"
+name="fedora-${vers}-rpi2"
+repo="repos/fedora-${vers}.repo"
 rpms="bcm283x-firmware uboot-images-armv7 extlinux-bootloader dracut-config-generic"
 krnl="kernel kernel-modules"
 

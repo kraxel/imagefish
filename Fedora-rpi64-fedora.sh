@@ -1,9 +1,10 @@
 #!/bin/sh
 
-name="fedora-25-rpi3-kraxel"
-repo="repos/fedora-25-aarch64.repo"
+vers="${1-25}"
+name="fedora-${vers}-rpi3-fedora"
+repo="repos/fedora-${vers}-aarch64.repo"
 rpms="bcm283x-firmware uboot-images-armv8 extlinux-bootloader dracut-config-generic"
-krnl="kernel-main"
+krnl="kernel kernel-modules"
 
 arch="$(uname -m)"
 tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"

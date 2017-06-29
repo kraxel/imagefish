@@ -1,7 +1,8 @@
 #!/bin/sh
 
-name="fedora-25-efi-grub2"
-repo="repos/fedora-25.repo"
+vers="${1-25}"
+name="fedora-${vers}-efi-grub2"
+repo="repos/fedora-${vers}.repo"
 rpms="grub2-efi shim -dracut-config-rescue dracut-config-generic"
 
 arch="$(uname -m)"

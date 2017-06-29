@@ -1,7 +1,8 @@
 #!/bin/sh
 
-name="fedora-25-efi-systemd"
-repo="repos/fedora-25.repo"
+vers="${1-25}"
+name="fedora-${vers}-efi-systemd"
+repo="repos/fedora-${vers}.repo"
 rpms="-grubby -dracut-config-rescue dracut-config-generic"
 
 arch="$(uname -m)"
