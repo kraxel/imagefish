@@ -5,8 +5,10 @@ BASE="$(dirname $0)"
 case "$(hostname --short)" in
 arm-b32 | cubietruck)
 	# rebuild images
-	./Fedora-rpi32.sh		|| exit 1
-	./Fedora-efi-armv7.sh		|| exit 1
+	./Fedora-rpi32.sh	25	|| exit 1
+	./Fedora-efi-armv7.sh	25	|| exit 1
+	./Fedora-rpi32.sh	26	|| exit 1
+	./Fedora-efi-armv7.sh	26	|| exit 1
 	;;
 arm-b64)
 	# rebuild images
