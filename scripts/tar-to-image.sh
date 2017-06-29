@@ -282,7 +282,7 @@ function fish_systemd_boot() {
 	echo "### init systemd-boot"
 	fish mkdir-p /etc/kernel
 	fish write /etc/kernel/cmdline "ro root=${rootfs} ${console}"
-	fish command "bootctl install"
+	fish command "bootctl --no-variables install"
 	fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
 	fish command "sed -i -e '/timeout/s/^#//' /boot/loader/loader.conf"
 }
