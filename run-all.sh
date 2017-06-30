@@ -14,7 +14,7 @@ arm-b64)
 	# rebuild images
 	./Fedora-rpi64-fedora.sh 26	|| exit 1
 	./Fedora-rpi64-kraxel.sh 26	|| exit 1
-	./Fedora-efi-grub2.sh	26	|| exit 1
+#	./Fedora-efi-grub2.sh	26	|| exit 1
 	;;
 nilsson)
 	# rebuild images
