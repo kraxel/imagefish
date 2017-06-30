@@ -400,7 +400,7 @@ function fish_extlinux_rpi64() {
 	label Fedora (${kver})
 	  kernel /vmlinux-${kver}
 	  append ${cmdline}
-	  fdtdir /dtb-${kver}/broadcom/
+	  fdtdir /dtb-${kver}/
 	  initrd /initramfs-${kver}.img
 EOF
 	fish copy-in "$WORK/extlinux.conf" /boot/extlinux
