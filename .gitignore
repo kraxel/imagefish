@@ -1,3 +1,5 @@
 *.tar.gz
 *.qcow2
+*.qcow2.xz
 *.raw
+*.raw.xz
