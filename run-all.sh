@@ -12,10 +12,9 @@ arm-b32 | cubietruck)
 	;;
 arm-b64)
 	# rebuild images
-	./Fedora-rpi64-fedora.sh	|| exit 1
-	./Fedora-rpi64-kraxel.sh	|| exit 1
-	./Fedora-efi-grub2.sh		|| exit 1
-#	./Fedora-efi-systemd.sh		|| exit 1
+	./Fedora-rpi64-fedora.sh 26	|| exit 1
+	./Fedora-rpi64-kraxel.sh 26	|| exit 1
+	./Fedora-efi-grub2.sh	26	|| exit 1
 	;;
 nilsson)
 	# rebuild images
