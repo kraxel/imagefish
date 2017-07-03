@@ -315,41 +315,39 @@ function fish_part_rpi() {
 	fish mount	/dev/sda4	/
 	fish mkdir			/boot
 	fish mount	/dev/sda2	/boot
-	fish mkdir			/boot/fw
-	fish mount	/dev/sda1	/boot/fw
+	fish mkdir			/boot/efi
+	fish mount	/dev/sda1	/boot/efi
 
 	cat <<-EOF > "$fstab"
 	LABEL=root	/		ext4	defaults	0 0
 	LABEL=boot	/boot		ext2	defaults	0 0
-	LABEL=firm	/boot/fw	vfat	ro		0 0
+	LABEL=firm	/boot/efi	vfat	ro		0 0
 	#LABEL=swap	swap		swap	defaults	0 0
 
 	#UUID=${id_root}	/		ext4	defaults	0 0
 	#UUID=${id_boot}	/boot		ext2	defaults	0 0
-	#UUID=${id_firm}	/boot/fw	vfat	ro		0 0
+	#UUID=${id_firm}	/boot/efi	vfat	ro		0 0
 	#UUID=${id_swap}	swap		swap	defaults	0 0
 EOF
 }
 
 function fish_firmware_rpi32() {
 	msg "rpi 32bit firmware setup"
-	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/fw
-	fish cp	/usr/share/uboot/rpi_2/u-boot.bin	/boot/fw/rpi2-u-boot.bin
-	fish cp	/usr/share/uboot/rpi_3_32b/u-boot.bin	/boot/fw/rpi3-u-boot.bin
+	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/efi
+	fish cp	/usr/share/uboot/rpi_2/u-boot.bin	/boot/efi/rpi2-u-boot.bin
+	fish cp	/usr/share/uboot/rpi_3_32b/u-boot.bin	/boot/efi/rpi3-u-boot.bin
 }
 
 function fish_firmware_rpi64() {
 	msg "rpi 64bit firmware setup"
-	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/fw
-	fish cp	/usr/share/uboot/rpi_3/u-boot.bin	/boot/fw/kernel8.img
+	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/efi
+	fish cp	/usr/share/uboot/rpi_3/u-boot.bin	/boot/efi/rpi3-u-boot.bin
+	fish rename /boot/efi/config.txt /boot/efi/config-32.txt
+	fish rename /boot/efi/config-64.txt /boot/efi/config.txt
 
-	# HACK: config.txt from bcm283x-firmware.rpm works for 32bit only
-	cat <<-EOF > "$WORK/config.txt"
-	init_uart_clock=48000000
-	gpu_mem=16
-	boot_delay=1
-EOF
-	fish copy-in	"$WORK/config.txt"		/boot/fw
+	# for uboot efi experiments ...
+	fish mkdir /boot/efi/EFITEST
+	fish copy-in /boot/efi/EFI/* /boot/efi/EFITEST
 }
 
 function fish_extlinux_rpi32() {
