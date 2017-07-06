@@ -1,3 +1,2 @@
-[mkimage-rhel-74-server-snap5]
-baseurl=http://spunk.home.kraxel.org/mirror/rhel/7/RHEL-7.4-20170621.0/compose/Server/$basearch/os/
-
+[mkimage-rhel-74-server-rc1]
+baseurl=http://spunk.home.kraxel.org/mirror/rhel/7/RHEL-7.4-20170630.1/compose/Server/$basearch/os/
