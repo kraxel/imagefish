@@ -188,6 +188,14 @@ if test ! -f ${dest}/etc/sysconfig/kernel; then
 	echo "DEFAULTKERNEL=kernel-core"	>> $WORK/sys-kernel
 	sudo cp $WORK/sys-kernel ${dest}/etc/sysconfig/kernel
 fi
+if test -f ${dest}/etc/selinux/config; then
+	# Ask for relabel.
+	# Put selinux into permissive, relabel might fail otherwise.
+	# After first boot (which relabels) setting enforcing should work.
+	sed -i -e 's/^SELINUX=.*/SELINUX=permissive/' \
+		${dest}/etc/selinux/config
+	touch "${dest}/.autorelabel"
+fi
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
 
 if test "$tarb" != ""; then

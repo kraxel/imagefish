@@ -178,7 +178,6 @@ function fish_copy_tar() {
 	msg "copying tarball to image"
 	fish tar-in	$tarb	/	compress:gzip
 	fish copy-in	$fstab	/etc
-	fish write /.autorelabel ""
 }
 
 function fish_part_efi_grub2() {
