@@ -3,7 +3,7 @@
 dest="$HOME/repo/images-testing"
 
 if test ! -d "$dest"; then
-	echo "# not found: $dest"
+	echo "# destdir not found ($dest)"
 	exit
 fi
 
@@ -13,21 +13,21 @@ images=$(ls	${IMAGEFISH_DESTDIR-.}/*.raw	\
 count=$(echo $images | wc -w)
 
 if test "$count" = "0"; then
-	echo "# no images"
+	echo "# no images found"
 	exit
 fi
 
 echo
-echo "# rsync $count uncompressed images"
+echo "# rsync $count uncompressed image(s)"
 rsync --verbose --progress $images $dest
 
 echo
-echo "# compress $count images"
+echo "# compress $count image(s)"
 rm -f ${IMAGEFISH_DESTDIR-.}/*.xz
 xz --verbose --keep $images
 
 echo
-echo "# rsync compressed images"
+echo "# rsync compressed image(s)"
 rsync --verbose --progress		\
 	${IMAGEFISH_DESTDIR-.}/*.xz	\
 	$dest
