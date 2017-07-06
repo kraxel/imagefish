@@ -192,9 +192,10 @@ if test -f ${dest}/etc/selinux/config; then
 	# Ask for relabel.
 	# Put selinux into permissive, relabel might fail otherwise.
 	# After first boot (which relabels) setting enforcing should work.
-	sed -i -e 's/^SELINUX=.*/SELINUX=permissive/' \
+	sudo sed -i \
+		-e 's/^SELINUX=.*/SELINUX=permissive/' \
 		${dest}/etc/selinux/config
-	touch "${dest}/.autorelabel"
+	sudo touch "${dest}/.autorelabel"
 fi
 sudo rm -rf "${dest}/var/cache/"{dnf,yum}
 
