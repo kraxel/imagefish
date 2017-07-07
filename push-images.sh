@@ -18,16 +18,19 @@ if test "$count" = "0"; then
 fi
 
 echo
-echo "# rsync $count uncompressed image(s)"
+echo "### rsync $count uncompressed image(s)"
+echo
 rsync --verbose --progress $images $dest
 
 echo
-echo "# compress $count image(s)"
+echo "### compress $count image(s)"
+echo
 rm -f ${IMAGEFISH_DESTDIR-.}/*.xz
 xz --verbose --keep $images
 
 echo
-echo "# rsync compressed image(s)"
+echo "### rsync compressed image(s)"
+echo
 rsync --verbose --progress		\
 	${IMAGEFISH_DESTDIR-.}/*.xz	\
 	$dest
