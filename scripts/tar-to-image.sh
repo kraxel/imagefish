@@ -218,6 +218,8 @@ EOF
 }
 
 function fish_grub2_efi() {
+	local term="${1-console}"
+
 	msg "boot setup (root=${rootfs})"
 	kver=$(guestfish --remote -- ls /boot \
 		| grep -e "^vmlinuz-" | grep -v rescue \
@@ -230,7 +232,7 @@ function fish_grub2_efi() {
 	echo "### create grub2 boot loader config"
 	cat <<-EOF > "$grubdef"
 	GRUB_TIMEOUT="5"
-	GRUB_TERMINAL_OUTPUT="console"
+	GRUB_TERMINAL_OUTPUT="${term}"
 	GRUB_DISABLE_SUBMENU="true"
 	GRUB_DISABLE_RECOVERY="true"
 	GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console}"
@@ -288,10 +290,12 @@ function fish_systemd_boot() {
 }
 
 function fish_part_rpi() {
+	local bootpart="${1-2}"
+
 	local id_firm id_boot id_swap id_root
 	fish_partition mbr 64 384 512
 
-	fish part-set-bootable /dev/sda 2 true
+	fish part-set-bootable /dev/sda $bootpart true
 	fish part-set-mbr-id /dev/sda 1 0x0c
 	fish part-set-mbr-id /dev/sda 2 0x83
 	fish part-set-mbr-id /dev/sda 3 0x82
@@ -343,10 +347,9 @@ function fish_firmware_rpi64() {
 	fish cp	/usr/share/uboot/rpi_3/u-boot.bin	/boot/efi/rpi3-u-boot.bin
 	fish rename /boot/efi/config.txt /boot/efi/config-32.txt
 	fish rename /boot/efi/config-64.txt /boot/efi/config.txt
-
-	# for uboot efi experiments ...
-	fish mkdir /boot/efi/EFITEST
-	fish copy-in /boot/efi/EFI/* /boot/efi/EFITEST
+	# copy kernel dtb to efi partition
+	fish mkdir /boot/efi/dtb
+	fish glob cp-a /boot/dtb-*/broadcom /boot/efi/dtb
 }
 
 function fish_extlinux_rpi32() {
@@ -465,7 +468,7 @@ efi-systemd)
 	;;
 rpi32)
 	fish_init
-	fish_part_rpi
+	fish_part_rpi	2
 	fish_copy_tar
 	fish_firmware_rpi32
 	fish_extlinux_rpi32
@@ -473,10 +476,11 @@ rpi32)
 	;;
 rpi64)
 	fish_init
-	fish_part_rpi
+	fish_part_rpi	1
 	fish_copy_tar
 	fish_firmware_rpi64
-	fish_extlinux_rpi64
+#	fish_extlinux_rpi64
+	fish_grub2_efi	gfxterm
 	fish_fini
 	;;
 *)
