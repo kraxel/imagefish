@@ -20,7 +20,7 @@ function makerepo() {
 
 	case "$basearch" in
 	aarch64)	base="$basesec"; kraxel="$armv8"		;;
-	armv7hl)	base="$basepri"; kraxel="$armv7"		;;
+	armhfp)		base="$basepri"; kraxel="$armv7"		;;
 	i386)		base="$basesec"					;;
 	x86_64)		base="$basepri"					;;
 	*)		echo "unknown basearch: $basearch"; exit 1	;;
@@ -74,12 +74,13 @@ EOF
 
 rels="25 26"
 reldev="26"
-archs="aarch64 armv7hl i386 x86_64"
+archs="aarch64 armhfp i386 x86_64"
 
 for rel in $rels; do
 	if test "$rel" = "$reldev"; then devel=1; else devel=0; fi
-	for arch in aarch64 armv7hl i386 x86_64; do
-		makerepo "$arch" "$rel" "$devel" \
-			| tee "fedora-${rel}-${arch}.repo"
+	for arch in $archs; do
+		repofile="fedora-${rel}-${arch}.repo"
+		echo "# writing $repofile"
+		makerepo "$arch" "$rel" "$devel" > "$repofile"
 	done
 done
