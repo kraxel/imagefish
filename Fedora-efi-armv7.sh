@@ -1,7 +1,7 @@
 #!/bin/sh
 
 vers="${1-25}"
-name="fedora-${vers}-efi"
+name="fedora-${vers}-efi-grub2"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 rpms="grub2-efi -dracut-config-rescue dracut-config-generic"
 
