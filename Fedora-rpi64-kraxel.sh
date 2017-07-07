@@ -2,7 +2,7 @@
 
 vers="${1-25}"
 name="fedora-${vers}-rpi3-kraxel"
-repo="repos/fedora-${vers}-aarch64.repo"
+repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 rpms="bcm283x-firmware uboot-images-armv8 extlinux-bootloader dracut-config-generic"
 krnl="kernel-main"
 

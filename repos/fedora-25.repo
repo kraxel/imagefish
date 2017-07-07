@@ -1,3 +1,0 @@
-[mkimage-fedora-25-server]
-baseurl=http://spunk.home.kraxel.org/mirror/fedora/rsync/f25-release/Server/$basearch/os/
-

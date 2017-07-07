@@ -2,7 +2,7 @@
 
 vers="${1-25}"
 name="fedora-${vers}-efi"
-repo="repos/fedora-${vers}-armv7.repo"
+repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 rpms="grub2-efi -dracut-config-rescue dracut-config-generic"
 
 arch="$(uname -m)"

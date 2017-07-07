@@ -2,7 +2,7 @@
 
 vers="${1-25}"
 name="fedora-${vers}-rpi2"
-repo="repos/fedora-${vers}.repo"
+repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 rpms="bcm283x-firmware uboot-images-armv7 extlinux-bootloader dracut-config-generic"
 krnl="kernel kernel-modules"
 
