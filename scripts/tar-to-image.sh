@@ -345,11 +345,16 @@ function fish_firmware_rpi64() {
 	msg "rpi 64bit firmware setup"
 	fish glob cp-a "/usr/share/bcm283x-firmware/*"	/boot/efi
 	fish cp	/usr/share/uboot/rpi_3/u-boot.bin	/boot/efi/rpi3-u-boot.bin
-	fish rename /boot/efi/config.txt /boot/efi/config-32.txt
-	fish rename /boot/efi/config-64.txt /boot/efi/config.txt
+	fish rename /boot/efi/config.txt		/boot/efi/config-32.txt
+	fish rename /boot/efi/config-64.txt		/boot/efi/config.txt
+
 	# copy kernel dtb to efi partition
-	fish mkdir /boot/efi/dtb
-	fish glob cp-a /boot/dtb-*/broadcom /boot/efi/dtb
+	fish mkdir					/boot/efi/dtb
+	fish glob cp-a "/boot/dtb-*/broadcom"		/boot/efi/dtb
+
+	# copy grub to boot (workaround u-boot bug)
+	fish mkdir					/boot/efi/efi/boot
+	fish cp /boot/efi/efi/fedora/grubaa64.efi	/boot/efi/efi/boot
 }
 
 function fish_extlinux_rpi32() {
