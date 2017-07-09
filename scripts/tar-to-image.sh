@@ -311,8 +311,8 @@ function fish_part_rpi() {
 	id_boot=$(guestfish --remote -- vfs-uuid /dev/sda2)
 	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda3)
 	id_root=$(guestfish --remote -- vfs-uuid /dev/sda4)
-	rootfs="LABEL=root"
-	#rootfs="UUID=${id_root}"
+	#rootfs="LABEL=root"
+	rootfs="UUID=${id_root}"
 
 	msg "mounting filesystems"
 	fish mount	/dev/sda4	/
@@ -322,11 +322,6 @@ function fish_part_rpi() {
 	fish mount	/dev/sda1	/boot/efi
 
 	cat <<-EOF > "$fstab"
-	#LABEL=root	/		ext4	defaults	0 0
-	#LABEL=boot	/boot		ext2	defaults	0 0
-	#LABEL=firm	/boot/efi	vfat	ro		0 0
-	#LABEL=swap	swap		swap	defaults	0 0
-
 	UUID=${id_root}	/		ext4	defaults	0 0
 	UUID=${id_boot}	/boot		ext2	defaults	0 0
 	UUID=${id_firm}	/boot/efi	vfat	ro		0 0
