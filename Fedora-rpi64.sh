@@ -1,7 +1,7 @@
 #!/bin/sh
 
 vers="${1-25}"
-name="fedora-${vers}-rpi3-efi"
+name="fedora-${vers}-rpi3"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 rpms="bcm283x-firmware uboot-images-armv8 grub2-efi dracut-config-generic"
 krnl="kernel kernel-modules"
