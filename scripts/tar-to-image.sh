@@ -381,10 +381,6 @@ EOF
 
 	echo "### rebuilding initramfs"
 	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
-
-	# HACK: kraxel's kernel-main.rpm scripts look at this
-	echo "### add /boot/cmdline.txt"
-	fish write /boot/cmdline.txt "$cmdline"
 }
 
 function fish_extlinux_rpi64() {
@@ -412,19 +408,6 @@ EOF
 
 	echo "### rebuilding initramfs"
 	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
-
-	# HACK: kraxel's kernel-main.rpm scripts look at this
-	echo "### add /boot/cmdline.txt"
-	fish write /boot/cmdline.txt "$cmdline"
-
-	# HACK: 64bit u-boot can't deal with compressed (gzip) kernels.
-	# WARN: kernel updates do NOT "just work" b/c of this.
-	case "$kernel" in
-	vmlinuz-*)
-		echo "### HACK ALERT: gunzip 64bit kernel"
-		fish cp /boot/vmlinuz-${kver} /boot/vmlinux-${kver}.gz
-		fish command "gunzip /boot/vmlinux-${kver}.gz"
-	esac
 }
 
 ######################################################################
