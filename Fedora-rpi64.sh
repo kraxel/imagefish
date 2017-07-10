@@ -3,7 +3,7 @@
 vers="${1-25}"
 name="fedora-${vers}-rpi3"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
-rpms="bcm283x-firmware uboot-images-armv8 grub2-efi dracut-config-generic"
+rpms="bcm283x-firmware uboot-images-armv8 grub2-efi -dracut-config-rescue dracut-config-generic"
 krnl="kernel kernel-modules"
 
 arch="$(uname -m)"
