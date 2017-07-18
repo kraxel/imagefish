@@ -45,17 +45,17 @@ baseurl=${base}/updates/${releasever}/$basearch/
 proxy=http://spunk.home.kraxel.org:3128
 enabled=$release
 
-[mkimage-fedora-${releasever}-everything-devel]
-name=Fedora ${releasever} everything development
-baseurl=${base}/development/${releasever}/Everything/${basearch}/os/
-proxy=http://spunk.home.kraxel.org:3128
-enabled=$devel
+#[mkimage-fedora-${releasever}-everything-devel]
+#name=Fedora ${releasever} everything development
+#baseurl=${base}/development/${releasever}/Everything/${basearch}/os/
+#proxy=http://spunk.home.kraxel.org:3128
+#enabled=$devel
 
-[mkimage-fedora-${releasever}-updates-devel]
-name=Fedora ${releasever} development updates
-baseurl=${base}/updates/${releasever}/$basearch/
-proxy=http://spunk.home.kraxel.org:3128
-enabled=$devel
+#[mkimage-fedora-${releasever}-updates-devel]
+#name=Fedora ${releasever} development updates
+#baseurl=${base}/updates/${releasever}/$basearch/
+#proxy=http://spunk.home.kraxel.org:3128
+#enabled=$devel
 
 EOF
 
@@ -73,7 +73,7 @@ EOF
 ################################################################################
 
 rels="25 26"
-reldev="26"
+reldev="27"
 archs="aarch64 armhfp i386 x86_64"
 
 for rel in $rels; do
