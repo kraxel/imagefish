@@ -3,8 +3,12 @@
 vers="${1-26}"
 name="fedora-${vers}-rpi2"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
-rpms="bcm283x-firmware uboot-images-armv7 extlinux-bootloader -dracut-config-rescue dracut-config-generic"
 krnl="kernel kernel-modules"
+
+rpms=""
+rpms="$rpms bcm283x-firmware uboot-images-armv7 extlinux-bootloader"
+rpms="$rpms -dracut-config-rescue dracut-config-generic"
+rpms="$rpms wpa_supplicant links"
 
 arch="$(uname -m)"
 tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"
