@@ -324,7 +324,7 @@ function fish_part_rpi() {
 	cat <<-EOF > "$fstab"
 	UUID=${id_root}	/		ext4	defaults	0 0
 	UUID=${id_boot}	/boot		ext2	defaults	0 0
-	UUID=${id_firm}	/boot/efi	vfat	ro		0 0
+	UUID=${id_firm}	/boot/efi	vfat	defaults	0 0
 	#UUID=${id_swap}	swap		swap	defaults	0 0
 EOF
 }
