@@ -8,7 +8,7 @@ if test "$image" = ""; then
 	exit 1
 fi
 
-if virt-cat -a "$image" /etc/grub2-efi.cfg >/dev/null; then
+if virt-cat -a "$image" /etc/grub2-efi.cfg >/dev/null 2>&1; then
 	bootedit="/etc/grub2-efi.cfg:s/^([ \t]*linux[ ]+[^ ]+)/\1 rd.driver.blacklist=${module}/"
 else
 	bootedit="/boot/extlinux/extlinux.conf:s/append/append rd.driver.blacklist=${module}/"
