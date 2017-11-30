@@ -14,8 +14,6 @@ proxy="http://spunk.home.kraxel.org:3128"
 function makerepo() {
 	local basearch="$1"
 	local releasever="$2"
-	local devel="$3"
-	local release=$(( 1 - $devel ))
 	local kraxel=""
 
 	case "$basearch" in
@@ -31,31 +29,26 @@ function makerepo() {
 name=Fedora ${releasever} server mirror
 baseurl=${mirror}/f${releasever}-release/Server/${basearch}/os/
 cost=90
-enabled=$release
 
 [mkimage-fedora-${releasever}-everything]
 name=Fedora ${releasever} everything
 baseurl=${base}/releases/${releasever}/Everything/${basearch}/os/
 proxy=http://spunk.home.kraxel.org:3128
-enabled=$release
 
 [mkimage-fedora-${releasever}-updates]
 name=Fedora ${releasever} updates
 baseurl=${base}/updates/${releasever}/$basearch/
 proxy=http://spunk.home.kraxel.org:3128
-enabled=$release
 
 #[mkimage-fedora-${releasever}-everything-devel]
 #name=Fedora ${releasever} everything development
 #baseurl=${base}/development/${releasever}/Everything/${basearch}/os/
 #proxy=http://spunk.home.kraxel.org:3128
-#enabled=$devel
 
 #[mkimage-fedora-${releasever}-updates-devel]
 #name=Fedora ${releasever} development updates
 #baseurl=${base}/updates/${releasever}/$basearch/
 #proxy=http://spunk.home.kraxel.org:3128
-#enabled=$devel
 
 EOF
 
@@ -72,8 +65,7 @@ EOF
 
 ################################################################################
 
-rels="25 26"
-reldev="27"
+rels="27"
 archs="aarch64 armhfp i386 x86_64"
 
 for rel in $rels; do
@@ -81,6 +73,6 @@ for rel in $rels; do
 	for arch in $archs; do
 		repofile="fedora-${rel}-${arch}.repo"
 		echo "# writing $repofile"
-		makerepo "$arch" "$rel" "$devel" > "$repofile"
+		makerepo "$arch" "$rel" > "$repofile"
 	done
 done
