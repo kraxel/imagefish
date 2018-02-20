@@ -5,7 +5,7 @@
 	<key>Boot</key>
 	<dict>
 		<key>Arguments</key>
-		<string>-v</string>
+		<string></string>
 		<key>DefaultVolume</key>
 		<string>system</string>
 		<key>Log</key>
