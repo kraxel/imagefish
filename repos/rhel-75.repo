@@ -1,0 +1,2 @@
+[mkimage-rhel-75-server]
+baseurl=http://spunk.home.kraxel.org/mirror/rhel/7/RHEL-7.5-20180322.0/compose/Server/$basearch/os/

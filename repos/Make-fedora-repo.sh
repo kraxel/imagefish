@@ -17,7 +17,7 @@ function makerepo() {
 	local kraxel=""
 
 	case "$basearch" in
-	aarch64)	base="$basesec"; kraxel="$armv8"		;;
+	aarch64)	base="$basepri"; kraxel="$armv8"		;;
 	armhfp)		base="$basepri"; kraxel="$armv7"		;;
 	i386)		base="$basesec"					;;
 	x86_64)		base="$basepri"					;;
@@ -33,22 +33,12 @@ cost=90
 [mkimage-fedora-${releasever}-everything]
 name=Fedora ${releasever} everything
 baseurl=${base}/releases/${releasever}/Everything/${basearch}/os/
-proxy=http://spunk.home.kraxel.org:3128
+proxy=${proxy}
 
 [mkimage-fedora-${releasever}-updates]
 name=Fedora ${releasever} updates
-baseurl=${base}/updates/${releasever}/$basearch/
-proxy=http://spunk.home.kraxel.org:3128
-
-#[mkimage-fedora-${releasever}-everything-devel]
-#name=Fedora ${releasever} everything development
-#baseurl=${base}/development/${releasever}/Everything/${basearch}/os/
-#proxy=http://spunk.home.kraxel.org:3128
-
-#[mkimage-fedora-${releasever}-updates-devel]
-#name=Fedora ${releasever} development updates
-#baseurl=${base}/updates/${releasever}/$basearch/
-#proxy=http://spunk.home.kraxel.org:3128
+baseurl=${base}/updates/${releasever}/Everything/$basearch/
+proxy=${proxy}
 
 EOF
 
@@ -65,7 +55,7 @@ EOF
 
 ################################################################################
 
-rels="27"
+rels="28"
 archs="aarch64 armhfp i386 x86_64"
 
 for rel in $rels; do
