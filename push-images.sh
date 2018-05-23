@@ -20,7 +20,8 @@ fi
 echo
 echo "### rsync $count uncompressed image(s)"
 echo
-rsync --verbose --progress $images $dest
+rsync --verbose --progress --implace	\
+	$images $dest
 
 echo
 echo "### compress $count image(s)"
@@ -31,6 +32,6 @@ xz --verbose --keep $images
 echo
 echo "### rsync compressed image(s)"
 echo
-rsync --verbose --progress		\
+rsync --verbose --progress --inplace	\
 	${IMAGEFISH_DESTDIR-.}/*.xz	\
 	$dest
