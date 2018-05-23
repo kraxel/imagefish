@@ -20,7 +20,7 @@ fi
 echo
 echo "### rsync $count uncompressed image(s)"
 echo
-rsync --verbose --progress --implace	\
+rsync --verbose --progress --inplace	\
 	$images $dest
 
 echo
