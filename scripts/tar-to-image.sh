@@ -248,27 +248,28 @@ EOF
 function fish_part_efi_systemd() {
 	local id_uefi id_swap id_root
 
-	fish_partition gpt 0 512 0 512
+	fish_partition gpt 4 512 0 512
 
-	fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_uefi}
-	fish part-set-bootable /dev/sda 1 true
-	fish part-set-gpt-type /dev/sda 2 ${uuid_gpt_swap}
-	fish part-set-gpt-type /dev/sda 3 ${uuid_gpt_root}
+	fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_bios}
+	fish part-set-gpt-type /dev/sda 2 ${uuid_gpt_uefi}
+	fish part-set-bootable /dev/sda 2 true
+	fish part-set-gpt-type /dev/sda 3 ${uuid_gpt_swap}
+	fish part-set-gpt-type /dev/sda 4 ${uuid_gpt_root}
 
 	msg "creating filesystems"
-	fish mkfs fat	/dev/sda1	label:UEFI
-	fish mkswap	/dev/sda2	label:swap
-	fish mkfs ext4	/dev/sda3	label:root
+	fish mkfs fat	/dev/sda2	label:UEFI
+	fish mkswap	/dev/sda3	label:swap
+	fish mkfs ext4	/dev/sda4	label:root
 
-	id_uefi=$(guestfish --remote -- vfs-uuid /dev/sda1)
-	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda2)
-	id_root=$(guestfish --remote -- vfs-uuid /dev/sda3)
+	id_uefi=$(guestfish --remote -- vfs-uuid /dev/sda2)
+	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda3)
+	id_root=$(guestfish --remote -- vfs-uuid /dev/sda4)
 	rootfs="UUID=${id_root}"
 
 	msg "mounting filesystems"
-	fish mount	/dev/sda3	/
+	fish mount	/dev/sda4	/
 	fish mkdir			/boot
-	fish mount	/dev/sda1	/boot
+	fish mount	/dev/sda2	/boot
 
 	cat <<-EOF > "$fstab"
 	UUID=${id_root}	/		ext4	defaults	0 0
