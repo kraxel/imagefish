@@ -120,7 +120,8 @@ fi
 ######################################################################
 # uuids
 
-uuid_gpt_efi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
+uuid_gpt_bios="21686148-6449-6E6F-744E-656564454649"
+uuid_gpt_uefi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
 uuid_gpt_swap="0657fd6d-a4ab-43c4-84e5-0933c84b4f4f"
 uuid_gpt_root="FIXME"
 
@@ -157,15 +158,16 @@ function fish_fini() {
 
 function fish_partition() {
 	local ptype="$1"
-	local szfirm="$2"
-	local szboot="$3"
-	local szswap="$4"
+	local szbios="$2"
+	local szuefi="$3"
+	local szboot="$4"
+	local szswap="$5"
 	local pstart=2048
 	local pend
 
 	msg "creating partitions"
 	fish part-init /dev/sda $ptype
-	for size in $szfirm $szboot $szswap; do
+	for size in $szbios $szuefi $szboot $szswap; do
 		test "$size" = "0" && continue
 		pend=$(( $pstart + $size * 2048 - 1 ))
 		fish part-add /dev/sda p $pstart $pend
@@ -183,9 +185,9 @@ function fish_copy_tar() {
 function fish_part_efi_grub2() {
 	local id_uefi id_boot id_swap id_root
 
-	fish_partition gpt 64 384 512
+	fish_partition gpt 0 64 384 512
 
-	fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_efi}
+	fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_uefi}
 	fish part-set-bootable /dev/sda 1 true
 	fish part-set-gpt-type /dev/sda 3 ${uuid_gpt_swap}
 	fish part-set-gpt-type /dev/sda 4 ${uuid_gpt_root}
@@ -246,9 +248,9 @@ EOF
 function fish_part_efi_systemd() {
 	local id_uefi id_swap id_root
 
-	fish_partition gpt 512 0 512
+	fish_partition gpt 0 512 0 512
 
-	fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_efi}
+	fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_uefi}
 	fish part-set-bootable /dev/sda 1 true
 	fish part-set-gpt-type /dev/sda 2 ${uuid_gpt_swap}
 	fish part-set-gpt-type /dev/sda 3 ${uuid_gpt_root}
@@ -293,7 +295,7 @@ function fish_part_rpi() {
 	local bootpart="${1-2}"
 
 	local id_firm id_boot id_swap id_root
-	fish_partition mbr 64 384 512
+	fish_partition mbr 0 64 384 512
 
 	fish part-set-bootable /dev/sda $bootpart true
 	fish part-set-mbr-id /dev/sda 1 0x0c
