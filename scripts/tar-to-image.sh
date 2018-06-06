@@ -34,6 +34,7 @@ trap 'do_cleanup' EXIT
 script="$WORK/imagefish.script"
 fstab="$WORK/fstab"
 grubdef="$WORK/grub"
+grubcfg="$WORK/grub.cfg"
 
 # variables
 rootfs=""
@@ -283,11 +284,52 @@ function fish_systemd_boot() {
 	kver=$(guestfish --remote -- ls /lib/modules)
 	echo "### kernel version is $kver"
 
+	havegrub=$(guestfish --remote -- is-dir /usr/lib/grub/i386-pc)
+	if test "$havegrub" = "true"; then
+		#
+		# install grub2 for bios, teach it to use the boot
+		# loader spec entries created by systemd-boot.  This
+		# gives us an image which boots with both bios and
+		# efi.
+		#
+		# Then uninstall the rpms so the grub2 scripts don't
+		# get into the way when updating the systemd-boot
+		# config on kernel updates.  Also cleanup files
+		# already created by grub2 scripts.
+		#
+		echo "### grub2 bios boot hack"
+		fish command "grub2-install --target=i386-pc /dev/sda"
+		grubrpms=$(guestfish --remote -- command "rpm -qa 'grub2*'")
+		grubrpms=$(echo $grubrpms)
+		fish command "rpm -e -v $grubrpms"
+		cat <<-EOF > "$grubcfg"
+		function load_video {
+			insmod all_video
+		}
+
+		insmod part_gpt
+		insmod fat
+		insmod serial
+		insmod terminal
+		insmod blscfg
+
+		serial --unit=0 --speed=115200
+		terminal_output console serial
+		terminal_input console serial
+
+		set boot='hd0,gpt2'
+		set timeout=3
+		blscfg
+EOF
+		fish copy-in $grubcfg /boot/grub2
+		fish glob rm /boot/*$kver
+	fi
+
 	echo "### init systemd-boot"
 	fish mkdir-p /etc/kernel
 	fish write /etc/kernel/cmdline "ro root=${rootfs} ${console}"
 	fish command "bootctl --no-variables install"
-	fish command "kernel-install remove ${kver}"
+	fish command "kernel-install remove ${kver} /lib/modules/${kver}/vmlinuz"
 	fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
 	fish command "sed -i -e '/timeout/s/^#//' /boot/loader/loader.conf"
 }
