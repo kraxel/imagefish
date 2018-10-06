@@ -48,6 +48,7 @@ function fish_format() {
 
 function fish_fini() {
 	fish umount-all
+	fish exit
 }
 
 ######################################################################

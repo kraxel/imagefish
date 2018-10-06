@@ -155,6 +155,7 @@ function fish_init() {
 
 function fish_fini() {
 	fish umount-all
+	fish exit
 }
 
 function fish_partition() {
