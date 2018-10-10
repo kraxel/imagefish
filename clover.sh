@@ -26,5 +26,9 @@ for config in clover/*.plist; do
 	echo "# $config => $out"
 	echo "#"
 	rm -f "$out"
-	(set -x; scripts/clover-image.sh --iso "$iso" --cfg "$config" --img "$out")
+	(set -x; scripts/clover-image.sh	\
+		--cfg "$config"			\
+		--iso "$iso"			\
+		--drv "$src/apfs.efi"		\
+		--img "$out")
 done

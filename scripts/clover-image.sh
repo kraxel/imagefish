@@ -6,6 +6,7 @@
 iso=""
 img=""
 cfg=""
+drv=""
 
 ######################################################################
 # create work dir
@@ -41,6 +42,7 @@ options:
     --iso <iso-image>
     --img <disk-image>
     --cfg <clover-config>
+    --drv <extra-driver>
 EOF
 }
 
@@ -56,6 +58,10 @@ while test "$1" != ""; do
 		;;
 	--cfg)
 		cfg="$2"
+		shift; shift
+		;;
+	--drv)
+		drv="$drv $2"
 		shift; shift
 		;;
 	esac
@@ -157,5 +163,9 @@ else
 	echo "# -*- OsxAptioFix v2 -*-"
 	fish copy-in $nodef/OsxAptioFix2Drv-64.efi /ESP/EFI/CLOVER/drivers64UEFI
 fi
+for file in $drv; do
+	echo "# -*- extra driver: $file -*-"
+	fish copy-in $file /ESP/EFI/CLOVER/drivers64UEFI
+done
 fish ls /ESP/EFI/CLOVER/drivers64UEFI
 fish_fini
