@@ -1,7 +1,7 @@
 #!/bin/sh
 
-name="rhel-73-efi"
-repo="repos/rhel-73.repo"
+name="rhel-76-efi"
+repo="/mort/mirror/rhel/repo/el7/spunk-RHEL-7.6-Server.repo"
 rpms="grub2-efi shim efibootmgr -dracut-config-rescue dracut-config-generic"
 
 arch="$(uname -m)"

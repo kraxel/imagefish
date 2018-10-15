@@ -1,7 +1,7 @@
 #!/bin/sh
 
-name="rhel-8-alpha-efi"
-repo="repos/rhel-8.repo"
+name="rhel-80-beta-efi"
+repo="/mort/mirror/rhel/repo/el8/spunk-RHEL-8.0-BaseOS.repo"
 rpms="grub2-efi shim efibootmgr -dracut-config-rescue dracut-config-generic"
 #rpms="efibootmgr -dracut-config-rescue dracut-config-generic" # systemd-boot
 
