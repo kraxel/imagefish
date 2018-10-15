@@ -144,9 +144,8 @@ case "$tool" in
 dnf)
 	tool="$tool -y --installroot ${dest}"
 	if test "$conf" != ""; then
-		tool="$tool --config ${conf}"
-		tool="$tool --disablerepo=*"
-		tool="$tool --enablerepo=mkimage-*"
+		tool="$tool --config=${conf}"
+		tool="$tool --setopt=reposdir=${dest}/etc/yum.repos.d"
 	fi
 	inst=""
 	for item in $grps; do inst="${inst} @${item}"; done
