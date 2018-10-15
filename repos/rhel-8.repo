@@ -1,2 +1,0 @@
-[mkimage-rhel-8-baseos]
-baseurl=http://spunk.home.kraxel.org/mirror/rhel/8/RHEL-8-latest/compose/BaseOS/$basearch/os/
