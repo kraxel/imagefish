@@ -1,6 +1,6 @@
 #!/bin/sh
 
-vers="${1-28}"
+vers="${1-29}"
 name="fedora-${vers}-rpi2"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 krnl="kernel kernel-modules"
