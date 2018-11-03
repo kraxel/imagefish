@@ -12,7 +12,7 @@ arm-b64)
 	# rebuild images
 #	./Fedora-rpi64.sh		29	|| exit 1
 	./Fedora-efi-grub2.sh 		29	|| exit 1
-	./Fedora-efi-systemd.sh 	29	|| exit 1
+#	./Fedora-efi-systemd.sh 	29	|| exit 1
 	;;
 sirius)
 	# rebuild images
