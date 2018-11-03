@@ -22,8 +22,9 @@ sirius)
 	./Fedora-efi-systemd.sh		29	|| exit 1
 	linux32 ./Fedora-efi-systemd.sh	29	|| exit 1
 
-	./RHEL74-efi.sh				|| exit 1
 	./RHEL75-efi.sh				|| exit 1
+	./RHEL76-efi.sh				|| exit 1
+	./RHEL80-efi.sh				|| exit 1
 	./CentOS7-efi.sh			|| exit 1
 	;;
 *)
