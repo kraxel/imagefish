@@ -119,7 +119,7 @@ if test ! -f "$tarb"; then
 fi
 
 ######################################################################
-# uuids
+# uuids & other names
 
 uuid_gpt_bios="21686148-6449-6E6F-744E-656564454649"
 uuid_gpt_uefi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
@@ -130,6 +130,12 @@ uuid_gpt_root_ia32="44479540-f297-41b2-9af7-d131d5f0458a"
 uuid_gpt_root_x64="4f68bce3-e8cd-4db1-96e7-fbcaf984b709"
 uuid_gpt_root_arm="69dad710-2ce4-4e3c-b16c-21a1d49abed3"
 uuid_gpt_root_a64="b921b045-1df0-41c3-af44-4c6f280d3fae"
+
+uefi_boot_file="FIXME"
+uefi_boot_file_ia32="BOOTIA32.EFI"
+uefi_boot_file_x64="BOOTX64.EFI"
+uefi_boot_file_arm="BOOTARM.EFI"
+uefi_boot_file_a64="BOOTAA64.EFI"
 
 ######################################################################
 # guestfish script helpers
@@ -186,32 +192,37 @@ function fish_copy_tar() {
 
 function fish_part_efi_grub2() {
 	local id_uefi id_boot id_swap id_root
+	local nr_uefi nr_boot nr_swap nr_root
 
 	fish_partition gpt 0 64 384 512
+	nr_uefi=1
+	nr_boot=2
+	nr_swap=3
+	nr_root=4
 
-	fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_uefi}
-	fish part-set-bootable /dev/sda 1 true
-	fish part-set-gpt-type /dev/sda 3 ${uuid_gpt_swap}
-	fish part-set-gpt-type /dev/sda 4 ${uuid_gpt_root}
+	fish part-set-gpt-type /dev/sda ${nr_uefi} ${uuid_gpt_uefi}
+	fish part-set-bootable /dev/sda ${nr_uefi} true
+	fish part-set-gpt-type /dev/sda ${nr_swap} ${uuid_gpt_swap}
+	fish part-set-gpt-type /dev/sda ${nr_root} ${uuid_gpt_root}
 
 	msg "creating filesystems"
-	fish mkfs fat	/dev/sda1	label:UEFI
-	fish mkfs ext2	/dev/sda2	label:boot
-	fish mkswap	/dev/sda3	label:swap
-	fish mkfs ext4	/dev/sda4	label:root
+	fish mkfs fat	/dev/sda${nr_uefi}	label:UEFI
+	fish mkfs ext2	/dev/sda${nr_boot}	label:boot
+	fish mkswap	/dev/sda${nr_swap}	label:swap
+	fish mkfs ext4	/dev/sda${nr_root}	label:root
 
-	id_uefi=$(guestfish --remote -- vfs-uuid /dev/sda1)
-	id_boot=$(guestfish --remote -- vfs-uuid /dev/sda2)
-	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda3)
-	id_root=$(guestfish --remote -- vfs-uuid /dev/sda4)
+	id_uefi=$(guestfish --remote -- vfs-uuid /dev/sda${nr_uefi})
+	id_boot=$(guestfish --remote -- vfs-uuid /dev/sda${nr_boot})
+	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda${nr_swap})
+	id_root=$(guestfish --remote -- vfs-uuid /dev/sda${nr_root})
 	rootfs="UUID=${id_root}"
 
 	msg "mounting filesystems"
-	fish mount	/dev/sda4	/
-	fish mkdir			/boot
-	fish mount	/dev/sda2	/boot
-	fish mkdir			/boot/efi
-	fish mount	/dev/sda1	/boot/efi
+	fish mount	/dev/sda${nr_root}	/
+	fish mkdir				/boot
+	fish mount	/dev/sda${nr_boot}	/boot
+	fish mkdir				/boot/efi
+	fish mount	/dev/sda${nr_uefi}	/boot/efi
 
 	cat <<-EOF > "$fstab"
 	UUID=${id_root}	/		ext4	defaults	0 0
@@ -223,6 +234,7 @@ EOF
 
 function fish_grub2_efi() {
 	local term="${1-console}"
+	local havegrubby haveboot grubefi
 
 	msg "boot setup (root=${rootfs})"
 	kver=$(guestfish --remote -- ls /boot \
@@ -233,18 +245,42 @@ function fish_grub2_efi() {
 	echo "### rebuilding initramfs"
 	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
 
-	echo "### create grub2 boot loader config"
-	cat <<-EOF > "$grubdef"
-	GRUB_TIMEOUT="5"
-	GRUB_TERMINAL_OUTPUT="${term}"
-	GRUB_DISABLE_SUBMENU="true"
-	GRUB_DISABLE_RECOVERY="true"
-	GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console}"
+	havegrubby=$(guestfish --remote -- is-file /usr/sbin/grubby)
+	if test "$havegrubby" = "true"; then
+		echo "### create grub2 boot loader config (grubby mode)"
+		cat <<-EOF > "$grubdef"
+			GRUB_TIMEOUT="5"
+			GRUB_TERMINAL_OUTPUT="${term}"
+			GRUB_DISABLE_SUBMENU="true"
+			GRUB_DISABLE_RECOVERY="true"
+			GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console}"
 EOF
-	fish copy-in $grubdef /etc/default
-	fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
-	fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
-	fish command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"
+		fish copy-in $grubdef /etc/default
+		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
+		fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
+		fish command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"
+	else
+		echo "### create grub2 boot loader config (bls mode)"
+		cat <<-EOF > "$grubdef"
+			GRUB_TIMEOUT="5"
+			GRUB_TERMINAL_OUTPUT="${term}"
+			GRUB_DISABLE_SUBMENU="true"
+			GRUB_DISABLE_RECOVERY="true"
+			GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console}"
+			GRUB_ENABLE_BLSCFG="true"
+EOF
+		fish copy-in $grubdef /etc/default
+		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
+	fi
+
+	haveboot=$(guestfish --remote -- is-file /boot/efi/EFI/BOOT/${uefi_boot_file})
+	if test "$havegrubby" = "true"; then
+		echo "# have ${uefi_boot_file}, good"
+	else
+		grubefi=$(guestfish --remote -- ls /boot/efi/EFI/*/grub*.efi)
+		echo "# install ${grubefi} as ${uefi_boot_file}"
+		fish cp	${grubefi} /boot/efi/EFI/BOOT/${uefi_boot_file}
+	fi
 }
 
 function fish_part_efi_systemd() {
@@ -465,18 +501,22 @@ case "$(uname -m)" in
 armv7*)
 	console="console=ttyAMA0,115200 console=tty1"
 	uuid_gpt_root="$uuid_gpt_root_arm"
+	uefi_boot_file="$uefi_boot_file_arm"
 	;;
 aarch64)
 	console="console=ttyAMA0,115200 console=tty1"
 	uuid_gpt_root="$uuid_gpt_root_a64"
+	uefi_boot_file="$uefi_boot_file_a64"
 	;;
 i?86)
 	console="console=ttyS0,115200 console=tty1"
 	uuid_gpt_root="$uuid_gpt_root_ia32"
+	uefi_boot_file="$uefi_boot_file_ia32"
 	;;
 x86_64)
 	console="console=ttyS0,115200 console=tty1"
 	uuid_gpt_root="$uuid_gpt_root_x64"
+	uefi_boot_file="$uefi_boot_file_x64"
 	;;
 esac
 

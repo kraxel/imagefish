@@ -20,6 +20,7 @@ sirius)
 
 	./Fedora-efi-grub2.sh		29	|| exit 1
 	./Fedora-efi-systemd.sh		29	|| exit 1
+	linux32 ./Fedora-efi-grub2.sh	29	|| exit 1
 	linux32 ./Fedora-efi-systemd.sh	29	|| exit 1
 
 	./RHEL75-efi.sh				|| exit 1
