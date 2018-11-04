@@ -274,11 +274,11 @@ EOF
 	fi
 
 	haveboot=$(guestfish --remote -- is-file /boot/efi/EFI/BOOT/${uefi_boot_file})
-	if test "$havegrubby" = "true"; then
-		echo "# have ${uefi_boot_file}, good"
+	if test "$haveboot" = "true"; then
+		echo "### have ${uefi_boot_file}, good"
 	else
 		grubefi=$(guestfish --remote -- ls /boot/efi/EFI/*/grub*.efi)
-		echo "# install ${grubefi} as ${uefi_boot_file}"
+		echo "### install ${grubefi} as ${uefi_boot_file}"
 		fish cp	${grubefi} /boot/efi/EFI/BOOT/${uefi_boot_file}
 	fi
 }
