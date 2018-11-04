@@ -6,7 +6,8 @@ case "$(hostname --short)" in
 arm-b32 | cubietruck)
 	# rebuild images
 #	./Fedora-rpi32.sh		29	|| exit 1
-	./Fedora-efi-armv7.sh		29	|| exit 1
+#	./Fedora-efi-armv7.sh		29	|| exit 1
+	./Fedora-efi-grub2.sh		29	|| exit 1
 	;;
 arm-b64)
 	# rebuild images

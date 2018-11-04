@@ -19,7 +19,7 @@ function msg() {
 }
 
 function do_cleanup() {
-	msg "cleaning up ..."
+	msg "cleaning up"
 	if test "$GUESTFISH_PID" != ""; then
 		guestfish --remote -- exit >/dev/null 2>&1 || true
 	fi
@@ -160,6 +160,7 @@ function fish_init() {
 }
 
 function fish_fini() {
+	msg "finishing"
 	fish umount-all
 	fish exit
 }
@@ -277,7 +278,7 @@ EOF
 	if test "$haveboot" = "true"; then
 		echo "### have ${uefi_boot_file}, good"
 	else
-		grubefi=$(guestfish --remote -- ls /boot/efi/EFI/*/grub*.efi)
+		grubefi=$(guestfish --remote -- glob-expand /boot/efi/EFI/*/grub*.efi)
 		echo "### install ${grubefi} as ${uefi_boot_file}"
 		fish cp	${grubefi} /boot/efi/EFI/BOOT/${uefi_boot_file}
 	fi
