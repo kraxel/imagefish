@@ -3,7 +3,13 @@
 vers="${1-29}"
 name="fedora-${vers}-efi-systemd"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
-rpms="efibootmgr grub2-pc -grubby -dracut-config-rescue dracut-config-generic"
+rpms="efibootmgr -grubby -dracut-config-rescue dracut-config-generic"
+
+rpms_i686="grub2-pc"
+rpms_x86_64="grub2-pc"
+rpms_armhfp=""
+rpms_aarch64=""
+eval "rpms=\"\$rpms \$rpms_$(uname -m)\""
 
 arch="$(uname -m)"
 tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"

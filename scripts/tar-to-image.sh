@@ -251,13 +251,11 @@ function fish_grub2_efi() {
 	local havegrubby haveboot grubefi
 
 	msg "boot setup (root=${rootfs})"
-	kver=$(guestfish --remote -- ls /boot \
-		| grep -e "^vmlinuz-" | grep -v rescue \
-		| sed -e "s/vmlinuz-//")
+	kver=$(guestfish --remote -- ls /lib/modules)
+#	kver=$(guestfish --remote -- ls /boot \
+#		| grep -e "^vmlinuz-" | grep -v rescue \
+#		| sed -e "s/vmlinuz-//")
 	echo "### kernel version is $kver"
-
-	echo "### rebuilding initramfs"
-	fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
 
 	havegrubby=$(guestfish --remote -- is-file /usr/sbin/grubby)
 	if test "$havegrubby" = "true"; then
@@ -273,6 +271,8 @@ EOF
 		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
 		fish command "sed -i -c -e s/linux16/linuxefi/ /etc/grub2-efi.cfg"
 		fish command "sed -i -c -e s/initrd16/initrdefi/ /etc/grub2-efi.cfg"
+		echo "### rebuilding initramfs"
+		fish command "dracut --force /boot/initramfs-${kver}.img ${kver}"
 	else
 		echo "### create grub2 boot loader config (bls mode)"
 		cat <<-EOF > "$grubdef"
@@ -285,6 +285,9 @@ EOF
 EOF
 		fish copy-in $grubdef /etc/default
 		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
+		echo "### reinstall kernel"
+		fish command "kernel-install remove ${kver} /lib/modules/${kver}/vmlinuz"
+		fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
 	fi
 
 	haveboot=$(guestfish --remote -- is-file /boot/efi/EFI/BOOT/${uefi_boot_file})
@@ -392,9 +395,10 @@ EOF
 	fish mkdir-p /etc/kernel
 	fish write /etc/kernel/cmdline "ro root=${rootfs} ${console} ${append}"
 	fish command "bootctl --no-variables install"
+	fish command "sed -i -e '/timeout/s/^#//' /boot/loader/loader.conf"
+	echo "### reinstall kernel"
 	fish command "kernel-install remove ${kver} /lib/modules/${kver}/vmlinuz"
 	fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
-	fish command "sed -i -e '/timeout/s/^#//' /boot/loader/loader.conf"
 }
 
 function fish_part_rpi() {
