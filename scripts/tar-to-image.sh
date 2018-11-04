@@ -248,7 +248,7 @@ EOF
 
 function fish_grub2_efi() {
 	local term="${1-console}"
-	local havegrubby havegrubpc haveboot grubefi
+	local havegrubby havegrubpc haveboot grubeficfg grubefi
 
 	msg "boot setup (root=${rootfs})"
 	kver=$(guestfish --remote -- ls /lib/modules)
@@ -261,11 +261,11 @@ function fish_grub2_efi() {
 	if test "$havegrubby" = "true"; then
 		echo "### create grub2 boot loader config (grubby mode)"
 		cat <<-EOF > "$grubdef"
-			GRUB_TIMEOUT="5"
-			GRUB_TERMINAL_OUTPUT="${term}"
-			GRUB_DISABLE_SUBMENU="true"
-			GRUB_DISABLE_RECOVERY="true"
-			GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
+		GRUB_TIMEOUT="5"
+		GRUB_TERMINAL_OUTPUT="${term}"
+		GRUB_DISABLE_SUBMENU="true"
+		GRUB_DISABLE_RECOVERY="true"
+		GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
 EOF
 		fish copy-in $grubdef /etc/default
 		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
@@ -276,23 +276,27 @@ EOF
 	else
 		echo "### create grub2 boot loader config (bls mode)"
 		cat <<-EOF > "$grubdef"
-			GRUB_TIMEOUT="5"
-			GRUB_TERMINAL_OUTPUT="${term}"
-			GRUB_DISABLE_SUBMENU="true"
-			GRUB_DISABLE_RECOVERY="true"
-			GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
-			GRUB_ENABLE_BLSCFG="true"
+		GRUB_TIMEOUT="5"
+		GRUB_TERMINAL_OUTPUT="${term}"
+		GRUB_DISABLE_SUBMENU="true"
+		GRUB_DISABLE_RECOVERY="true"
+		GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
+		GRUB_ENABLE_BLSCFG="true"
 EOF
 		fish copy-in $grubdef /etc/default
 		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
 
-		# not working ...
-#		havegrubpc=$(guestfish --remote -- is-dir /usr/lib/grub/i386-pc)
-#		if test "$havegrubpc" = "true"; then
-#			echo "### setup grub2 for bios boot"
-#			fish command "grub2-install --target=i386-pc /dev/sda"
-#			fish command "sh -c 'grub2-mkconfig > /etc/grub2.cfg'"
-#		fi
+		havegrubpc=$(guestfish --remote -- is-dir /usr/lib/grub/i386-pc)
+		if test "$havegrubpc" = "true"; then
+			echo "### setup grub2 for bios boot"
+			grubeficfg=$(guestfish --remote -- glob-expand /boot/efi/EFI/*/grub.cfg)
+			grubeficfg="${grubeficfg#/boot/efi}"
+			cat <<-EOF > "$grubcfg"
+			configfile (hd0,gpt2)$grubeficfg
+EOF
+			fish command "grub2-install --target=i386-pc /dev/sda"
+			fish copy-in $grubcfg /boot/grub2
+		fi
 
 		echo "### reinstall kernel"
 		fish command "kernel-install remove ${kver} /lib/modules/${kver}/vmlinuz"
