@@ -124,6 +124,7 @@ fi
 uuid_gpt_bios="21686148-6449-6E6F-744E-656564454649"
 uuid_gpt_uefi="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
 uuid_gpt_swap="0657fd6d-a4ab-43c4-84e5-0933c84b4f4f"
+uuid_gpt_boot="BC13C2FF-59E6-4262-A352-B275FD6F7172"
 uuid_gpt_root="FIXME"
 
 uuid_gpt_root_ia32="44479540-f297-41b2-9af7-d131d5f0458a"
@@ -213,6 +214,7 @@ function fish_part_efi_grub2() {
 
 	fish part-set-gpt-type /dev/sda ${nr_uefi} ${uuid_gpt_uefi}
 	fish part-set-bootable /dev/sda ${nr_uefi} true
+	fish part-set-gpt-type /dev/sda ${nr_boot} ${uuid_gpt_boot}
 	fish part-set-gpt-type /dev/sda ${nr_swap} ${uuid_gpt_swap}
 	fish part-set-gpt-type /dev/sda ${nr_root} ${uuid_gpt_root}
 
