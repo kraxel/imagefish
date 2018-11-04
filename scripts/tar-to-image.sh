@@ -192,14 +192,24 @@ function fish_copy_tar() {
 }
 
 function fish_part_efi_grub2() {
+	local mode="$1"
 	local id_uefi id_boot id_swap id_root
 	local nr_uefi nr_boot nr_swap nr_root
 
-	fish_partition gpt 0 64 384 512
-	nr_uefi=1
-	nr_boot=2
-	nr_swap=3
-	nr_root=4
+	if test "$mode" = "bios"; then
+		fish_partition gpt 4 64 384 512
+		fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_bios}
+		nr_uefi=2
+		nr_boot=3
+		nr_swap=4
+		nr_root=5
+	else
+		fish_partition gpt 0 64 384 512
+		nr_uefi=1
+		nr_boot=2
+		nr_swap=3
+		nr_root=4
+	fi
 
 	fish part-set-gpt-type /dev/sda ${nr_uefi} ${uuid_gpt_uefi}
 	fish part-set-bootable /dev/sda ${nr_uefi} true
@@ -285,30 +295,42 @@ EOF
 }
 
 function fish_part_efi_systemd() {
+	local mode="$1"
 	local id_uefi id_swap id_root
+	local nr_uefi nr_swap nr_root
 
-	fish_partition gpt 4 512 0 512
+	if test "$mode" = "bios"; then
+		fish_partition gpt 4 512 0 512
+		fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_bios}
+		nr_uefi=2
+		nr_swap=3
+		nr_root=4
+	else
+		fish_partition gpt 0 512 0 512
+		nr_uefi=1
+		nr_swap=2
+		nr_root=3
+	fi
 
-	fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_bios}
-	fish part-set-gpt-type /dev/sda 2 ${uuid_gpt_uefi}
-	fish part-set-bootable /dev/sda 2 true
-	fish part-set-gpt-type /dev/sda 3 ${uuid_gpt_swap}
-	fish part-set-gpt-type /dev/sda 4 ${uuid_gpt_root}
+	fish part-set-gpt-type /dev/sda ${nr_uefi} ${uuid_gpt_uefi}
+	fish part-set-bootable /dev/sda ${nr_uefi} true
+	fish part-set-gpt-type /dev/sda ${nr_swap} ${uuid_gpt_swap}
+	fish part-set-gpt-type /dev/sda ${nr_root} ${uuid_gpt_root}
 
 	msg "creating filesystems"
-	fish mkfs fat	/dev/sda2	label:UEFI
-	fish mkswap	/dev/sda3	label:swap
-	fish mkfs ext4	/dev/sda4	label:root
+	fish mkfs fat	/dev/sda${nr_uefi}	label:UEFI
+	fish mkswap	/dev/sda${nr_swap}	label:swap
+	fish mkfs ext4	/dev/sda${nr_root}	label:root
 
-	id_uefi=$(guestfish --remote -- vfs-uuid /dev/sda2)
-	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda3)
-	id_root=$(guestfish --remote -- vfs-uuid /dev/sda4)
+	id_uefi=$(guestfish --remote -- vfs-uuid /dev/sda${nr_uefi})
+	id_swap=$(guestfish --remote -- vfs-uuid /dev/sda${nr_swap})
+	id_root=$(guestfish --remote -- vfs-uuid /dev/sda${nr_root})
 	rootfs="UUID=${id_root}"
 
 	msg "mounting filesystems"
-	fish mount	/dev/sda4	/
-	fish mkdir			/boot
-	fish mount	/dev/sda2	/boot
+	fish mount	/dev/sda${nr_root}	/
+	fish mkdir				/boot
+	fish mount	/dev/sda${nr_uefi}	/boot
 
 	cat <<-EOF > "$fstab"
 	UUID=${id_root}	/		ext4	defaults	0 0
@@ -503,35 +525,39 @@ armv7*)
 	console="console=ttyAMA0,115200 console=tty1"
 	uuid_gpt_root="$uuid_gpt_root_arm"
 	uefi_boot_file="$uefi_boot_file_arm"
+	uefi_part_mode="pure"
 	;;
 aarch64)
 	console="console=ttyAMA0,115200 console=tty1"
 	uuid_gpt_root="$uuid_gpt_root_a64"
 	uefi_boot_file="$uefi_boot_file_a64"
+	uefi_part_mode="pure"
 	;;
 i?86)
 	console="console=ttyS0,115200 console=tty1"
 	uuid_gpt_root="$uuid_gpt_root_ia32"
 	uefi_boot_file="$uefi_boot_file_ia32"
+	uefi_part_mode="bios"
 	;;
 x86_64)
 	console="console=ttyS0,115200 console=tty1"
 	uuid_gpt_root="$uuid_gpt_root_x64"
 	uefi_boot_file="$uefi_boot_file_x64"
+	uefi_part_mode="bios"
 	;;
 esac
 
 case "$mode" in
 efi-grub2)
 	fish_init
-	fish_part_efi_grub2
+	fish_part_efi_grub2 ${uefi_part_mode}
 	fish_copy_tar
 	fish_grub2_efi
 	fish_fini
 	;;
 efi-systemd)
 	fish_init
-	fish_part_efi_systemd
+	fish_part_efi_systemd ${uefi_part_mode}
 	fish_copy_tar
 	fish_systemd_boot
 	fish_fini
