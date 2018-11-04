@@ -248,7 +248,7 @@ EOF
 
 function fish_grub2_efi() {
 	local term="${1-console}"
-	local havegrubby haveboot grubefi
+	local havegrubby havegrubpc haveboot grubefi
 
 	msg "boot setup (root=${rootfs})"
 	kver=$(guestfish --remote -- ls /lib/modules)
@@ -285,6 +285,15 @@ EOF
 EOF
 		fish copy-in $grubdef /etc/default
 		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
+
+		# not working ...
+#		havegrubpc=$(guestfish --remote -- is-dir /usr/lib/grub/i386-pc)
+#		if test "$havegrubpc" = "true"; then
+#			echo "### setup grub2 for bios boot"
+#			fish command "grub2-install --target=i386-pc /dev/sda"
+#			fish command "sh -c 'grub2-mkconfig > /etc/grub2.cfg'"
+#		fi
+
 		echo "### reinstall kernel"
 		fish command "kernel-install remove ${kver} /lib/modules/${kver}/vmlinuz"
 		fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
@@ -346,12 +355,14 @@ EOF
 }
 
 function fish_systemd_boot() {
+	local havegrubpc
+
 	msg "boot setup (root=${rootfs})"
 	kver=$(guestfish --remote -- ls /lib/modules)
 	echo "### kernel version is $kver"
 
-	havegrub=$(guestfish --remote -- is-dir /usr/lib/grub/i386-pc)
-	if test "$havegrub" = "true"; then
+	havegrubpc=$(guestfish --remote -- is-dir /usr/lib/grub/i386-pc)
+	if test "$havegrubpc" = "true"; then
 		#
 		# install grub2 for bios, teach it to use the boot
 		# loader spec entries created by systemd-boot.  This

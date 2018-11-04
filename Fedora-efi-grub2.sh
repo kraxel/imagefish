@@ -3,7 +3,7 @@
 vers="${1-29}"
 name="fedora-${vers}-efi-grub2"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
-rpms="grub2-efi efibootmgr -dracut-config-rescue dracut-config-generic"
+rpms="grub2-efi efibootmgr -grubby -dracut-config-rescue dracut-config-generic"
 
 rpms_i686=""
 rpms_x86_64="shim"
