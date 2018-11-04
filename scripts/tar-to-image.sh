@@ -39,6 +39,7 @@ grubcfg="$WORK/grub.cfg"
 # variables
 rootfs=""
 console=""
+append="loglevel=5"
 
 ######################################################################
 # parse args
@@ -266,7 +267,7 @@ function fish_grub2_efi() {
 			GRUB_TERMINAL_OUTPUT="${term}"
 			GRUB_DISABLE_SUBMENU="true"
 			GRUB_DISABLE_RECOVERY="true"
-			GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console}"
+			GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
 EOF
 		fish copy-in $grubdef /etc/default
 		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
@@ -279,7 +280,7 @@ EOF
 			GRUB_TERMINAL_OUTPUT="${term}"
 			GRUB_DISABLE_SUBMENU="true"
 			GRUB_DISABLE_RECOVERY="true"
-			GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console}"
+			GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
 			GRUB_ENABLE_BLSCFG="true"
 EOF
 		fish copy-in $grubdef /etc/default
@@ -389,7 +390,7 @@ EOF
 
 	echo "### init systemd-boot"
 	fish mkdir-p /etc/kernel
-	fish write /etc/kernel/cmdline "ro root=${rootfs} ${console}"
+	fish write /etc/kernel/cmdline "ro root=${rootfs} ${console} ${append}"
 	fish command "bootctl --no-variables install"
 	fish command "kernel-install remove ${kver} /lib/modules/${kver}/vmlinuz"
 	fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
@@ -460,7 +461,7 @@ function fish_firmware_rpi64() {
 }
 
 function fish_extlinux_rpi32() {
-	local cmdline="ro root=${rootfs} ${console}"
+	local cmdline="ro root=${rootfs} ${console} ${append}"
 	local kver
 
 	msg "boot setup (root=${rootfs})"
@@ -486,7 +487,7 @@ EOF
 }
 
 function fish_extlinux_rpi64() {
-	local cmdline="ro root=${rootfs} ${console}"
+	local cmdline="ro root=${rootfs} ${console} ${append}"
 	local kernel kver
 
 	msg "boot setup (root=${rootfs})"
@@ -524,25 +525,25 @@ fi
 
 case "$(uname -m)" in
 armv7*)
-	console="console=ttyAMA0,115200 console=tty1"
+	console="console=tty1 console=ttyAMA0,115200"
 	uuid_gpt_root="$uuid_gpt_root_arm"
 	uefi_boot_file="$uefi_boot_file_arm"
 	uefi_part_mode="pure"
 	;;
 aarch64)
-	console="console=ttyAMA0,115200 console=tty1"
+	console="console=tty1 console=ttyAMA0,115200"
 	uuid_gpt_root="$uuid_gpt_root_a64"
 	uefi_boot_file="$uefi_boot_file_a64"
 	uefi_part_mode="pure"
 	;;
 i?86)
-	console="console=ttyS0,115200 console=tty1"
+	console="console=tty1 console=ttyS0,115200"
 	uuid_gpt_root="$uuid_gpt_root_ia32"
 	uefi_boot_file="$uefi_boot_file_ia32"
 	uefi_part_mode="bios"
 	;;
 x86_64)
-	console="console=ttyS0,115200 console=tty1"
+	console="console=tty1 console=ttyS0,115200"
 	uuid_gpt_root="$uuid_gpt_root_x64"
 	uefi_boot_file="$uefi_boot_file_x64"
 	uefi_part_mode="bios"
