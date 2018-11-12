@@ -544,13 +544,13 @@ fi
 
 case "$(uname -m)" in
 armv7*)
-	console="console=tty1 console=ttyAMA0,115200"
+	console="console=tty1 console=ttyAMA0,115200 earlycon"
 	uuid_gpt_root="$uuid_gpt_root_arm"
 	uefi_boot_file="$uefi_boot_file_arm"
 	uefi_part_mode="pure"
 	;;
 aarch64)
-	console="console=tty1 console=ttyAMA0,115200"
+	console="console=tty1 console=ttyAMA0,115200 earlycon"
 	uuid_gpt_root="$uuid_gpt_root_a64"
 	uefi_boot_file="$uefi_boot_file_a64"
 	uefi_part_mode="pure"
