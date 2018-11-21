@@ -8,6 +8,10 @@ size="4G"
 tarb=""
 mode="efi-grub2"
 
+size_uefi="128"
+size_boot="384"
+size_swap="512"
+
 ######################################################################
 # create work dir
 
@@ -63,6 +67,13 @@ while test "$1" != ""; do
 	case "$1" in
 	-i | --image)
 		qcow="$2"
+		shift; shift
+		;;
+	--big)
+		size="16G"
+		size_uefi="128"
+		size_boot="1024"
+		size_swap="1024"
 		shift; shift
 		;;
 	-s | --size)
@@ -199,14 +210,14 @@ function fish_part_efi_grub2() {
 	local nr_uefi nr_boot nr_swap nr_root
 
 	if test "$mode" = "bios"; then
-		fish_partition gpt 4 64 384 512
+		fish_partition gpt 4 ${size_uefi} ${size_boot} ${size_swap}
 		fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_bios}
 		nr_uefi=2
 		nr_boot=3
 		nr_swap=4
 		nr_root=5
 	else
-		fish_partition gpt 0 64 384 512
+		fish_partition gpt 0 ${size_uefi} ${size_boot} ${size_swap}
 		nr_uefi=1
 		nr_boot=2
 		nr_swap=3
@@ -319,13 +330,13 @@ function fish_part_efi_systemd() {
 	local nr_uefi nr_swap nr_root
 
 	if test "$mode" = "bios"; then
-		fish_partition gpt 4 512 0 512
+		fish_partition gpt 4 $(( ${size_uefi} + ${size_boot} )) 0 ${size_swap}
 		fish part-set-gpt-type /dev/sda 1 ${uuid_gpt_bios}
 		nr_uefi=2
 		nr_swap=3
 		nr_root=4
 	else
-		fish_partition gpt 0 512 0 512
+		fish_partition gpt 0 $(( ${size_uefi} + ${size_boot} )) 0 ${size_swap}
 		nr_uefi=1
 		nr_swap=2
 		nr_root=3
