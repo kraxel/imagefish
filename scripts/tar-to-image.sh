@@ -55,6 +55,7 @@ options:
   setup:
     --tar <tarball>
     --image <image>
+    --big                         use large partitions
     --size <size>                 (default: $size)
   mode:
     --efi-grub2                   (default)
