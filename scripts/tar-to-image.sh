@@ -74,7 +74,7 @@ while test "$1" != ""; do
 		size_uefi="128"
 		size_boot="1024"
 		size_swap="1024"
-		shift; shift
+		shift
 		;;
 	-s | --size)
 		size="$2"
