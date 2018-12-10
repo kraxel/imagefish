@@ -146,6 +146,7 @@ dnf)
 	if test "$conf" != ""; then
 		tool="$tool --config=${conf}"
 		tool="$tool --setopt=reposdir=${dest}/etc/yum.repos.d"
+		tool="$tool --releasever=0"
 	fi
 	inst=""
 	for item in $grps; do inst="${inst} @${item}"; done
