@@ -17,10 +17,9 @@ function makerepo() {
 	local kraxel=""
 
 	case "$basearch" in
-#	aarch64)	base="$basepri"; kraxel="$armv8"		;;
-#	armhfp)		base="$basepri"; kraxel="$armv7"		;;
 	aarch64)	base="$basepri"					;;
-	armhfp)		base="$basepri"					;;
+	armhfp)		base="$basepri"; kraxel="$armv7"		;;
+#	armhfp)		base="$basepri"					;;
 	i386)		base="$basesec"					;;
 	x86_64)		base="$basepri"					;;
 	*)		echo "unknown basearch: $basearch"; exit 1	;;
