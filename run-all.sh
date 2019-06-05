@@ -22,7 +22,7 @@ sirius)
 
 	./Fedora-efi-grub2.sh		$FVER	|| exit 1
 	./Fedora-efi-systemd.sh		$FVER	|| exit 1
-	linux32 ./Fedora-efi-grub2.sh	$FVER	|| exit 1
+#	linux32 ./Fedora-efi-grub2.sh	$FVER	|| exit 1
 	linux32 ./Fedora-efi-systemd.sh	$FVER	|| exit 1
 
 	./RHEL7-efi.sh			7.5	|| exit 1

@@ -17,7 +17,9 @@ img="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.qcow2"
 
 echo ""
 echo "###"
-echo "### $name"
+echo "### $name ($arch)"
+echo "###"
+echo "### $rpms"
 echo "###"
 
 set -ex
