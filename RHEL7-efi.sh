@@ -1,8 +1,9 @@
 #!/bin/sh
 
-name="rhel-80-beta-efi"
-repo="/mort/mirror/rhel/repo/el8/spunk-RHEL-8.0-BaseOS.repo"
-rpms="grub2-efi grub2-pc shim efibootmgr -grubby -dracut-config-rescue dracut-config-generic"
+vers="$1"
+name="rhel-${vers}-efi"
+repo="/mort/mirror/rhel/repo/el7/spunk-RHEL-${vers}-Server.repo"
+rpms="grub2-efi shim efibootmgr -dracut-config-rescue dracut-config-generic"
 
 arch="$(uname -m)"
 tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"
