@@ -1,6 +1,6 @@
 #!/bin/sh
 
-vers="${1-29}"
+vers="${1-30}"
 name="fedora-${vers}-efi-systemd"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 rpms="-grubby -dracut-config-rescue dracut-config-generic"
