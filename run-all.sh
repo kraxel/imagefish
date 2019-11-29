@@ -9,11 +9,13 @@ arm-b32 | cubietruck)
 	./Fedora-efi-armv7.sh		$FVER	|| exit 1
 #	./Fedora-efi-grub2.sh		$FVER	|| exit 1
 	;;
+
 arm-b64)
 	# rebuild images
 	./Fedora-efi-grub2.sh 		$FVER	|| exit 1
 #	./Fedora-efi-systemd.sh 	$FVER	|| exit 1
 	;;
+
 fedora)
 	# rebuild images
 	export IMAGEFISH_DESTDIR="$HOME/imagefish"
@@ -34,6 +36,7 @@ sirius)
 	./CentOS7-efi.sh			|| exit 1
 	./CentOS8-efi.sh			|| exit 1
 	;;
+
 *)
 	echo "unknown host, don't know what to do"
 	exit 1
