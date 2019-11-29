@@ -14,12 +14,15 @@ arm-b64)
 	./Fedora-efi-grub2.sh 		$FVER	|| exit 1
 #	./Fedora-efi-systemd.sh 	$FVER	|| exit 1
 	;;
+fedora)
+	# rebuild images
+	export IMAGEFISH_DESTDIR="$HOME/imagefish"
+	./Fedora-efi-grub2.sh		$FVER	|| exit 1
+	./Fedora-efi-systemd.sh		$FVER	|| exit 1
+
 sirius)
 	# rebuild images
 	export IMAGEFISH_DESTDIR="/vmdisk/hdd/imagefish"
-
-#	./Fedora-efi-grub2.sh		$FVER	|| exit 1
-#	./Fedora-efi-systemd.sh		$FVER	|| exit 1
 
 	linux32 ./Fedora-efi-systemd.sh	30	|| exit 1
 
