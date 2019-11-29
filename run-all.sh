@@ -26,8 +26,8 @@ sirius)
 
 	./RHEL7-efi.sh			7.6	|| exit 1
 	./RHEL7-efi.sh			7.7	|| exit 1
-	./RHEL8-efi.sh			8.0	|| exit 1
-	./RHEL8-efi.sh			8.1	|| exit 1
+	./RHEL8-efi.sh			8.0.0	|| exit 1
+	./RHEL8-efi.sh			8.1.0	|| exit 1
 	./CentOS7-efi.sh			|| exit 1
 	;;
 *)
