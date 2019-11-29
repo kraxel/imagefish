@@ -2,7 +2,7 @@
 
 vers="$1"
 name="rhel-${vers}-efi"
-repo="/mort/mirror/rhel/repo/el8/spunk-RHEL-${vers}-BaseOS.repo"
+repo="/mort/mirror/rhel/repo/el8/mirror-RHEL-${vers}-BaseOS.repo"
 rpms="grub2-efi grub2-pc shim -grubby -dracut-config-rescue dracut-config-generic"
 
 arch="$(uname -m)"

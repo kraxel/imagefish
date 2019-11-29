@@ -2,7 +2,7 @@
 
 vers="$1"
 name="rhel-${vers}-wsl"
-repo="/mort/mirror/rhel/repo/el8/spunk-RHEL-${vers}-BaseOS.repo"
+repo="/mort/mirror/rhel/repo/el8/mirror-RHEL-${vers}-BaseOS.repo"
 rpms="-kernel* -microcode_ctl"
 
 tar="${IMAGEFISH_DESTDIR-.}/${name}.tar"
