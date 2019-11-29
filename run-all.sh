@@ -21,7 +21,7 @@ sirius)
 #	./Fedora-efi-grub2.sh		$FVER	|| exit 1
 #	./Fedora-efi-systemd.sh		$FVER	|| exit 1
 
-#	linux32 ./Fedora-efi-grub2.sh	$FVER	|| exit 1
+	linux32 ./Fedora-efi-grub2.sh	30	|| exit 1
 	linux32 ./Fedora-efi-systemd.sh	30	|| exit 1
 
 	./RHEL7-efi.sh			7.6	|| exit 1
@@ -29,6 +29,7 @@ sirius)
 	./RHEL8-efi.sh			8.0.0	|| exit 1
 	./RHEL8-efi.sh			8.1.0	|| exit 1
 	./CentOS7-efi.sh			|| exit 1
+	./CentOS8-efi.sh			|| exit 1
 	;;
 *)
 	echo "unknown host, don't know what to do"
