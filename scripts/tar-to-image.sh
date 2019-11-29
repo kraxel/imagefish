@@ -392,7 +392,7 @@ function fish_systemd_boot() {
 		#
 		echo "### grub2 bios boot hack"
 		fish command "grub2-install --target=i386-pc /dev/sda"
-		grubrpms=$(guestfish --remote -- command "rpm -qa 'grub2*'")
+		grubrpms=$(guestfish --remote -- command "rpm -qa 'grub2*' os-prober")
 		grubrpms=$(echo $grubrpms)
 		fish command "rpm -e -v $grubrpms"
 		cat <<-EOF > "$grubcfg"
@@ -415,7 +415,9 @@ function fish_systemd_boot() {
 		blscfg
 EOF
 		fish copy-in $grubcfg /boot/grub2
-		fish glob rm /boot/*$kver
+		fish glob rm-f /boot/Sys*$kver
+		fish glob rm-f /boot/conf*$kver
+		fish glob rm-f /boot/vmlin*$kver
 	fi
 
 	echo "### init systemd-boot"
