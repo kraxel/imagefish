@@ -19,6 +19,7 @@ fedora)
 	export IMAGEFISH_DESTDIR="$HOME/imagefish"
 	./Fedora-efi-grub2.sh		$FVER	|| exit 1
 	./Fedora-efi-systemd.sh		$FVER	|| exit 1
+	;;
 
 sirius)
 	# rebuild images
