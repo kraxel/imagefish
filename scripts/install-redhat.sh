@@ -146,6 +146,7 @@ dnf)
 	if test "$conf" != ""; then
 		tool="$tool --config=${conf}"
 		tool="$tool --setopt=reposdir=${dest}/etc/yum.repos.d"
+		tool="$tool --setopt=zchunk=off"
 		tool="$tool --releasever=0"
 	fi
 	inst=""
