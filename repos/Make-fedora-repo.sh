@@ -56,8 +56,8 @@ EOF
 
 ################################################################################
 
-rels="30"
-archs="aarch64 armhfp i386 x86_64"
+rels="31"
+archs="aarch64 armhfp x86_64"
 
 for rel in $rels; do
 	if test "$rel" = "$reldev"; then devel=1; else devel=0; fi

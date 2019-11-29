@@ -1,7 +1,7 @@
 #!/bin/sh
 
 BASE="$(dirname $0)"
-FVER="30"
+FVER="31"
 
 case "$(hostname --short)" in
 arm-b32 | cubietruck)
@@ -21,11 +21,12 @@ sirius)
 	./Fedora-efi-grub2.sh		$FVER	|| exit 1
 	./Fedora-efi-systemd.sh		$FVER	|| exit 1
 #	linux32 ./Fedora-efi-grub2.sh	$FVER	|| exit 1
-	linux32 ./Fedora-efi-systemd.sh	$FVER	|| exit 1
+	linux32 ./Fedora-efi-systemd.sh	30	|| exit 1
 
-	./RHEL7-efi.sh			7.5	|| exit 1
 	./RHEL7-efi.sh			7.6	|| exit 1
+	./RHEL7-efi.sh			7.7	|| exit 1
 	./RHEL8-efi.sh			8.0	|| exit 1
+	./RHEL8-efi.sh			8.1	|| exit 1
 	./CentOS7-efi.sh			|| exit 1
 	;;
 *)
