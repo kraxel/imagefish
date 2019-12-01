@@ -7,9 +7,9 @@ rpms="-grubby -dracut-config-rescue dracut-config-generic"
 
 rpms_i686="grub2-efi-ia32 grub2-pc"
 rpms_x86_64="shim grub2-efi-x64 grub2-pc"
-rpms_armhfp="grub2-efi-arm"
+rpms_armhfp="grub2-efi-arm grub2-tools"
 rpms_aarch64="shim grub2-efi-aa64"
-eval "rpms=\"\$rpms \$rpms_$(uname -m)\""
+eval "rpms=\"\$rpms \$rpms_$(sh basearch.sh)\""
 
 arch="$(uname -m)"
 tar="${IMAGEFISH_DESTDIR-.}/${name}-${arch}.tar.gz"

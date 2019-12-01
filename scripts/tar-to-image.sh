@@ -319,7 +319,7 @@ EOF
 	if test "$haveboot" = "true"; then
 		echo "### have ${uefi_boot_file}, good"
 	else
-		grubefi=$(guestfish --remote -- glob-expand /boot/efi/EFI/*/grub*.efi)
+		grubefi=$(guestfish --remote -- glob-expand "/boot/efi/EFI/*/grub*.efi")
 		echo "### install ${grubefi} as ${uefi_boot_file}"
 		fish cp	${grubefi} /boot/efi/EFI/BOOT/${uefi_boot_file}
 	fi
@@ -415,9 +415,7 @@ function fish_systemd_boot() {
 		blscfg
 EOF
 		fish copy-in $grubcfg /boot/grub2
-		fish glob rm-f /boot/Sys*$kver
-		fish glob rm-f /boot/conf*$kver
-		fish glob rm-f /boot/vmlin*$kver
+		fish glob rm "/boot/*$kver"
 	fi
 
 	echo "### init systemd-boot"
