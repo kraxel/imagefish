@@ -7,13 +7,13 @@ case "$(hostname --short)" in
 arm-b32 | cubietruck)
 	# rebuild images
 	./Fedora-efi-armv7.sh		$FVER	|| exit 1
-	./Fedora-efi-grub2.sh		$FVER	|| exit 1
+#	./Fedora-efi-grub2.sh		$FVER	|| exit 1
 	;;
 
 arm-b64)
 	# rebuild images
 	./Fedora-efi-grub2.sh 		$FVER	|| exit 1
-	./Fedora-efi-systemd.sh 	$FVER	|| exit 1
+#	./Fedora-efi-systemd.sh 	$FVER	|| exit 1
 	;;
 
 fedora)
