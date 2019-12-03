@@ -278,6 +278,7 @@ function fish_grub2_efi() {
 		GRUB_DISABLE_SUBMENU="true"
 		GRUB_DISABLE_RECOVERY="true"
 		GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
+		GRUB_ENABLE_BLSCFG="false"
 EOF
 		fish copy-in $grubdef /etc/default
 		fish command "sh -c 'grub2-mkconfig > /etc/grub2-efi.cfg'"
