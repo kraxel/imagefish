@@ -1,0 +1,8 @@
+[mkimage-centos-8-baseos]
+baseurl=http://mirror.centos.org/centos/8/BaseOS/$basearch/os/
+proxy=http://spunk.home.kraxel.org:3128
+
+[mkimage-centos-8-appstream]
+baseurl=http://mirror.centos.org/centos/8/AppStream/$basearch/os/
+proxy=http://spunk.home.kraxel.org:3128
+
