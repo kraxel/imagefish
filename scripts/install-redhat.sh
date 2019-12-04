@@ -11,6 +11,7 @@ rpms=""
 krnl="kernel"
 conf=""
 quiet="--quiet"
+platform=""
 
 ######################################################################
 # create work dir
@@ -50,6 +51,7 @@ options:
     --kernel <kernel>               (default: $krnl)
   package manager setup
     --config <repos>
+    --platform <name>
     --dnf                           (default)
     --yum
 EOF
@@ -80,6 +82,10 @@ while test "$1" != ""; do
 		;;
 	-c | --config)
 		conf="$2"
+		shift; shift
+		;;
+	--platform)
+		platform="$2"
 		shift; shift
 		;;
 	-v | --verbose)
@@ -148,6 +154,9 @@ dnf)
 		tool="$tool --setopt=reposdir=${dest}/etc/yum.repos.d"
 		tool="$tool --setopt=zchunk=off"
 		tool="$tool --releasever=0"
+	fi
+	if test "$platform" != ""; then
+		tool="$tool --setopt=module_platform_id=platform:$platform"
 	fi
 	inst=""
 	for item in $grps; do inst="${inst} @${item}"; done
