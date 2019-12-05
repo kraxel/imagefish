@@ -14,6 +14,7 @@ arm-b64)
 	# rebuild images
 	./Fedora-efi-grub2.sh 		$FVER	|| exit 1
 #	./Fedora-efi-systemd.sh 	$FVER	|| exit 1
+	./CentOS8-efi.sh			|| exit 1
 	;;
 
 fedora)
