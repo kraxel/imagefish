@@ -6,7 +6,6 @@ FVER="31"
 case "$(hostname --short)" in
 arm-b32 | cubietruck)
 	# rebuild images
-#	./Fedora-efi-armv7.sh		$FVER	|| exit 1
 	./Fedora-efi-grub2.sh		$FVER	|| exit 1
 	;;
 
