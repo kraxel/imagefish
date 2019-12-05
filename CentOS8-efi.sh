@@ -1,7 +1,8 @@
 #!/bin/sh
 
-name="centos-8-efi"
-repo="repos/centos-8.repo"
+vers="${1-8}"
+name="centos-${vers}-efi"
+repo="repos/centos-${vers}.repo"
 rpms="shim -grubby -dracut-config-rescue dracut-config-generic"
 
 rpms_x86_64="shim grub2-efi-x64 grub2-pc"
