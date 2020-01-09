@@ -38,9 +38,11 @@ grub2-mkconfig -o /etc/grub2-efi.cfg
 parted /dev/sda disk_set pmbr_boot off
 
 # setup bios boot
-cat <<'EOF' > /etc/grub2.cfg
-search --no-floppy --set efi --file /efi/redhat/grub.cfg
-configfile ($efi)/efi/redhat/grub.cfg
+grubcfg=$(echo /boot/efi/EFI/*/grub.cfg)
+grubcfg=${grubcfg#/boot/efi}
+cat <<EOF > /etc/grub2.cfg
+search --no-floppy --set efi --file $grubcfg
+configfile (\$efi)$grubcfg
 EOF
 
 %end

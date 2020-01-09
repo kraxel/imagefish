@@ -1,28 +1,14 @@
 #!/bin/sh
 
 # config
-name="rhel8"
-arch="x86_64"
-size="4"
+name="rhel"
 base="http://spunk.home.kraxel.org/mirror/rhel/redhat/rhel-8/rel-eng/RHEL-8"
 dest="/vmdisk/hdd/imagefish"
+vers="8.2.0 8.1.0 8.0.0"
 
-kick="$(pwd)/${name}.ks"
-disk="$(pwd)/${name}-ks-${arch}.qcow2"
-repo="${base}/latest-RHEL-8.1.0/compose/BaseOS/$arch/os/"
-
-# install
-rm -f "$disk"
-(set -x; virt-install \
-	--virt-type kvm \
-	--os-variant rhel8.0 \
-	--arch "${arch}" \
-	--name "virt-install-${name}" \
-	--memory 4096 \
-	--nographics \
-	--transient \
-	--network user \
-	--disk "bus=scsi,format=qcow2,sparse=yes,size=${size},path=${dest}-${disk}" \
-	--initrd-inject "${kick}" \
-	--extra-args "console=ttyS0 ks=file:/${kick##*/} inst.repo=$repo" \
-	--location "$repo" ) || exit 1
+for v in $vers; do
+	disk="${dest}/${name}-${v}-ks-x86_64.qcow2"
+	repo="${base}/latest-RHEL-${v}/compose/BaseOS/x86_64/os/"
+	./run-install.sh "$disk" "$repo"
+	sudo chown kraxel.kraxel "$disk"
+done
