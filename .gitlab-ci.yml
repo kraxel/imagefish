@@ -8,7 +8,7 @@ image_fedora:
   before_script:
     - dnf install -y /usr/bin/guestfish
   script:
-    - Fedora-efi-grub2.sh 33
+    - ./Fedora-efi-grub2.sh
   artifacts:
     paths:
       - Fedora-*.qcow2
