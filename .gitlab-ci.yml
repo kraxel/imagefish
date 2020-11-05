@@ -2,6 +2,13 @@ stages:
   - images
   - publish
 
+.store_images: &store_images
+  - xz --verbose *.qcow2
+  - mkdir $CI_JOB_NAME
+  - mv --verbose *.qcow2.xz $CI_JOB_NAME
+  - tree -s -h --charset utf8 -T "$CI_JOB_NAME images" -H "$CI_JOB_URL/artifacts/raw/$CI_JOB_NAME" $CI_JOB_NAME > index.html
+  - mv --verbose index.html $CI_JOB_NAME
+
 fedora:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
@@ -10,12 +17,7 @@ fedora:
   script:
     - time ./Fedora-efi-grub2.sh
     - time ./Fedora-efi-systemd.sh
-    - xz --verbose *.qcow2
-    - mkdir fedora
-    - mv --verbose *.qcow2.xz fedora
-    - tree -s -h --charset utf8 -T "fedora images" -H "$CI_JOB_URL/artifacts/raw/fedora" fedora > index.html
-    - mv --verbose index.html fedora
-    - printenv | grep ^CI_JOB
+    - *store_images
   artifacts:
     paths:
       - fedora
