@@ -1,8 +1,8 @@
 #!/bin/sh
 
-vers="${1-30}"
+source Fedora-setup.sh
+
 name="fedora-${vers}-wsl"
-repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 rpms="strace git"
 
 tar="${IMAGEFISH_DESTDIR-.}/${name}.tar"

@@ -1,8 +1,8 @@
 #!/bin/sh
 
-vers="${1-30}"
+source Fedora-setup.sh
+
 name="fedora-${vers}-efi-systemd"
-repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 rpms="-grubby -dracut-config-rescue dracut-config-generic"
 
 rpms_i686="grub2-pc"
