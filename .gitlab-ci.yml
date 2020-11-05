@@ -9,10 +9,11 @@ fedora:
     - time dnf install -y /usr/bin/guestfish /usr/bin/xz
   script:
     - time ./Fedora-efi-grub2.sh
+    - time ./Fedora-efi-systemd.sh
     - xz --verbose *.qcow2
     - mkdir fedora
     - mv --verbose *.qcow2.xz fedora
-    - tree -s -h -T "fedora images" -H "$CI_JOB_URL/artifacts/raw/fedora/" fedora > index.html
+    - tree -s -h -T "fedora images" -H "$CI_JOB_URL/artifacts/raw/fedora/" fedora/ > index.html
     - mv --verbose index.html fedora
   artifacts:
     paths:
