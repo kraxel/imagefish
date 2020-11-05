@@ -2,26 +2,28 @@ stages:
   - images
   - publish
 
-image_fedora:
+fedora:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   before_script:
-    - dnf install -y /usr/bin/guestfish
+    - dnf install -y /usr/bin/guestfish /usr/bin/xz
   script:
     - ./Fedora-efi-grub2.sh
+    - xz fedora-*.qcow2
   artifacts:
     paths:
-      - fedora-*.qcow2
+      - fedora-*.qcow2.xz
 
 pages:
   stage: publish
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   dependencies:
-    - image_fedora
+    - fedora
   script:
     - mkdir public
-    - mv *.qcow2 public
-    - tree -s -h -T "qemu images" --charset utf8 -H . public > index.html
+    - echo "<pre>"      >  index.html
+    - set | grep ^CI    >> index.html
+    - echo "</pre>"     >> index.html
     - mv index.html public
   artifacts:
     paths:
