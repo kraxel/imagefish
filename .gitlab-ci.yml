@@ -10,11 +10,13 @@ fedora:
   script:
     - time ./Fedora-efi-grub2.sh
     - xz --verbose *.qcow2
-    - tree -s -h -T "fedora images" -P "*.qcow2.xz" -H "$CI_JOB_URL/artifacts/file/" . > index.html
+    - mkdir fedora
+    - mv --verbose *.qcow2.xz fedora
+    - tree -s -h -T "fedora images" -H "$CI_JOB_URL/artifacts/raw/fedora/" fedora > index.html
+    - mv --verbose index.html fedora
   artifacts:
     paths:
-      - fedora-*.qcow2.xz
-      - index.html
+      - fedora/
 
 pages:
   stage: publish
@@ -23,7 +25,7 @@ pages:
     - fedora
   script:
     - mkdir public
-    - mv index.html public
+    - mv fedora/index.html public
   artifacts:
     paths:
       - public/
