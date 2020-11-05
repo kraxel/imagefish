@@ -1,0 +1,12 @@
+stages:
+  - images
+
+image_fedora:
+  stage: images
+  image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  script:
+    - dnf install -y guestfish
+    - Fedora-efi-grub2.sh 33
+  artifacts:
+    paths:
+      - Fedora-*.qcow2
