@@ -1,5 +1,6 @@
 stages:
   - images
+  - publish
 
 image_fedora:
   stage: images
@@ -10,3 +11,18 @@ image_fedora:
   artifacts:
     paths:
       - Fedora-*.qcow2
+
+pages:
+  stage: publish
+  image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  dependencies:
+    - image_fedora
+  script:
+    - mkdir public
+    - mv *.qcow2 public
+    - tree -T "$CI_PROJECT_NAME rpms" --charset utf8 -H . public > index.html
+    - mv index.html public
+  artifacts:
+    paths:
+      - public/
+
