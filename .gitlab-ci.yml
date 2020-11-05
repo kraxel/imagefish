@@ -13,11 +13,12 @@ fedora:
     - xz --verbose *.qcow2
     - mkdir fedora
     - mv --verbose *.qcow2.xz fedora
-    - tree -s -h -T "fedora images" -H "$CI_JOB_URL/artifacts/raw/fedora/" fedora/ > index.html
+    - tree -s -h -T "fedora images" -H "$CI_JOB_URL/artifacts/raw/fedora" fedora > index.html
     - mv --verbose index.html fedora
+    - printenv | grep ^CI_JOB
   artifacts:
     paths:
-      - fedora/
+      - fedora
 
 pages:
   stage: publish
