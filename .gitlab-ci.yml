@@ -10,7 +10,7 @@ fedora:
   script:
     - time ./Fedora-efi-grub2.sh
     - xz --verbose *.qcow2
-    - tree -s -h -T "fedora images" -I "*.qcow2.xz" -H "$CI_JOB_URL/artifacts/file/" . > index.html
+    - tree -s -h -T "fedora images" -P "*.qcow2.xz" -H "$CI_JOB_URL/artifacts/file/" . > index.html
   artifacts:
     paths:
       - fedora-*.qcow2.xz
