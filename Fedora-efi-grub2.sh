@@ -1,6 +1,6 @@
 #!/bin/sh
 
-source Fedora-setup.sh
+source ./Fedora-setup.sh
 
 name="fedora-${vers}-efi-grub2"
 rpms="-grubby -dracut-config-rescue dracut-config-generic"

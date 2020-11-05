@@ -1,6 +1,6 @@
 #!/bin/sh
 
-source Fedora-setup.sh
+source ./Fedora-setup.sh
 
 name="fedora-${vers}-wsl"
 rpms="strace git"
