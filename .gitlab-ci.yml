@@ -9,8 +9,8 @@ fedora:
     - dnf install -y /usr/bin/guestfish /usr/bin/xz
   script:
     - ./Fedora-efi-grub2.sh
-    - xz --verbose *.qcow2
-    - tree -s -h -t "fedora images" -I "*.qcow2.xz" -H "$CI_JOB_URL/artifacts/file/" . > index.html
+    - xz --threads=0 --verbose *.qcow2
+    - tree -s -h -T "fedora images" -I "*.qcow2.xz" -H "$CI_JOB_URL/artifacts/file/" . > index.html
   artifacts:
     paths:
       - fedora-*.qcow2.xz
