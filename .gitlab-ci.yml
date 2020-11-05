@@ -21,7 +21,7 @@ pages:
   script:
     - mkdir public
     - mv *.qcow2 public
-    - tree -T "$CI_PROJECT_NAME rpms" --charset utf8 -H . public > index.html
+    - tree -s -h -T "qemu images" --charset utf8 -H . public > index.html
     - mv index.html public
   artifacts:
     paths:
