@@ -22,6 +22,32 @@ fedora:
     paths:
       - fedora
 
+centos8:
+  stage: images
+  image: registry.gitlab.com/kraxel/rpm-package-builder:centos8
+  before_script:
+    - time dnf install -y /usr/bin/guestfish /usr/bin/xz
+  script:
+    - sed -i -e '/proxy/d' repos/centos-8.repo
+    - time ./CentOS8-efi.sh
+    - *store_images
+  artifacts:
+    paths:
+      - centos8
+
+centos7:
+  stage: images
+  image: registry.gitlab.com/kraxel/rpm-package-builder:centos7
+  before_script:
+    - time yum install -y /usr/bin/guestfish /usr/bin/xz
+  script:
+    - sed -i -e '/proxy/d' repos/centos-7.repo
+    - time ./CentOS7-efi.sh
+    - *store_images
+  artifacts:
+    paths:
+      - centos7
+
 pages:
   stage: publish
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
