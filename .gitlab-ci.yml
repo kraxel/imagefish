@@ -60,7 +60,7 @@ pages:
     - centos7
   script:
     - mkdir public
-    - for d in fedora centos8 centos7; do mv -v ${d}/index.html public/${d}.html
+    - for d in fedora centos8 centos7; do mv -v ${d}/index.html public/${d}.html; done
     - tree --charset utf8 -T "images" -H . public > index.html
     - mv -v index.html public
   artifacts:
