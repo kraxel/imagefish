@@ -56,9 +56,13 @@ pages:
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   dependencies:
     - fedora
+    - centos8
+    - centos7
   script:
     - mkdir public
-    - mv fedora/index.html public
+    - for d in fedora centos8 centos7; do mv -v ${d}/index.html public/${d}.html
+    - tree --charset utf8 -T "images" -H . public > index.html
+    - mv -v index.html public
   artifacts:
     paths:
       - public/
