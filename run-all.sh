@@ -42,4 +42,4 @@ sirius)
 	;;
 esac
 
-exec $BASE/push-images.sh
+#exec $BASE/push-images.sh
