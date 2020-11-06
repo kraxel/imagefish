@@ -260,9 +260,11 @@ EOF
 
 function fish_grub2_efi() {
 	local term="${1-console}"
-	local havegrubby havegrubpc haveboot grubeficfg grubefi
+	local havegrubby havegrubpc haveboot
+	local grubeficfg grubefi blsentry cmdline
 
 	msg "boot setup (root=${rootfs})"
+	cmdline="ro root=${rootfs} ${console} ${append}"
 	kver=$(guestfish --remote -- ls /lib/modules)
 #	kver=$(guestfish --remote -- ls /boot \
 #		| grep -e "^vmlinuz-" | grep -v rescue \
@@ -277,7 +279,7 @@ function fish_grub2_efi() {
 		GRUB_TERMINAL_OUTPUT="${term}"
 		GRUB_DISABLE_SUBMENU="true"
 		GRUB_DISABLE_RECOVERY="true"
-		GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
+		GRUB_CMDLINE_LINUX="${cmdline}"
 		GRUB_ENABLE_BLSCFG="false"
 EOF
 		fish copy-in $grubdef /etc/default
@@ -293,7 +295,7 @@ EOF
 		GRUB_TERMINAL_OUTPUT="${term}"
 		GRUB_DISABLE_SUBMENU="true"
 		GRUB_DISABLE_RECOVERY="true"
-		GRUB_CMDLINE_LINUX="ro root=${rootfs} ${console} ${append}"
+		GRUB_CMDLINE_LINUX="${cmdline}"
 		GRUB_ENABLE_BLSCFG="true"
 EOF
 		fish copy-in $grubdef /etc/default
@@ -314,6 +316,10 @@ EOF
 		echo "### reinstall kernel"
 		fish command "kernel-install remove ${kver} /lib/modules/${kver}/vmlinuz"
 		fish command "kernel-install add ${kver} /lib/modules/${kver}/vmlinuz"
+
+		echo "### fixup bls entry"
+		blsentry=$(guestfish --remote -- glob-expand "/boot/loader/entries/*${kver}*")
+		fish command "sed -i -e 's|^options.*|options ${cmdline}|' ${blsentry}"
 	fi
 
 	haveboot=$(guestfish --remote -- is-file /boot/efi/EFI/BOOT/${uefi_boot_file})
