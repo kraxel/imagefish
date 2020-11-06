@@ -76,6 +76,7 @@ pages:
     - for d in centos7 centos8 fedora wsl; do mv -v ${d}/index.html public/${d}.html; done
     - tree --charset utf8 -T "images" -H . public > index.html
     - mv -v index.html public
+    - printenv | grep ^CI_
   artifacts:
     paths:
       - public/
