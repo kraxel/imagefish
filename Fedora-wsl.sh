@@ -3,7 +3,7 @@
 source ./Fedora-setup.sh
 
 name="fedora-${vers}-wsl"
-rpms="strace git"
+rpms="git-core"
 
 tar="${IMAGEFISH_DESTDIR-.}/${name}.tar"
 
