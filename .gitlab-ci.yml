@@ -6,37 +6,13 @@ variables:
   DEPS: "/usr/bin/guestfish xz sudo"
 
 .store_images: &store_images
-  - xz --verbose *.qcow2
+  - xz --verbose $(ls *.tar *.qcow2)
   - mkdir $CI_JOB_NAME
-  - mv --verbose *.qcow2.xz $CI_JOB_NAME
-  - tree -s -h --charset utf8 -T "$CI_JOB_NAME images" -H "$CI_JOB_URL/artifacts/raw/$CI_JOB_NAME" $CI_JOB_NAME > index.html
+  - mv --verbose *.xz $CI_JOB_NAME
+  - name="$CI_JOB_NAME images"
+  - base="$CI_JOB_URL/artifacts/raw/$CI_JOB_NAME"
+  - tree -s -h --charset utf8 -T "$name" -H "$base" $CI_JOB_NAME > index.html
   - mv --verbose index.html $CI_JOB_NAME
-
-fedora:
-  stage: images
-  image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
-  before_script:
-    - time dnf install -y $DEPS
-  script:
-    - time ./Fedora-efi-grub2.sh
-    - time ./Fedora-efi-systemd.sh
-    - *store_images
-  artifacts:
-    paths:
-      - fedora
-
-centos8:
-  stage: images
-  image: registry.gitlab.com/kraxel/rpm-package-builder:centos8
-  before_script:
-    - time dnf install -y $DEPS
-  script:
-    - sed -i -e '/proxy/d' repos/centos-8.repo
-    - time ./CentOS8-efi.sh
-    - *store_images
-  artifacts:
-    paths:
-      - centos8
 
 centos7:
   stage: images
@@ -51,16 +27,53 @@ centos7:
     paths:
       - centos7
 
+centos8:
+  stage: images
+  image: registry.gitlab.com/kraxel/rpm-package-builder:centos8
+  before_script:
+    - time dnf install -y $DEPS
+  script:
+    - sed -i -e '/proxy/d' repos/centos-8.repo
+    - time ./CentOS8-efi.sh
+    - *store_images
+  artifacts:
+    paths:
+      - centos8
+
+fedora:
+  stage: images
+  image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  before_script:
+    - time dnf install -y $DEPS
+  script:
+    - time ./Fedora-efi-grub2.sh
+    - time ./Fedora-efi-systemd.sh
+    - *store_images
+  artifacts:
+    paths:
+      - fedora
+
+wsl:
+  stage: images
+  image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  script:
+    - time ./Fedora-wsl.sh
+    - *store_images
+  artifacts:
+    paths:
+      - wsl
+
 pages:
   stage: publish
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   dependencies:
-    - fedora
-    - centos8
     - centos7
+    - centos8
+    - fedora
+    - wsl
   script:
     - mkdir public
-    - for d in fedora centos8 centos7; do mv -v ${d}/index.html public/${d}.html; done
+    - for d in centos7 centos8 fedora wsl; do mv -v ${d}/index.html public/${d}.html; done
     - tree --charset utf8 -T "images" -H . public > index.html
     - mv -v index.html public
   artifacts:
