@@ -1,26 +1,25 @@
 #!/bin/sh
 
 BASE="$(dirname $0)"
-FVER="31"
 
 case "$(hostname --short)" in
 arm-b32 | cubietruck)
 	# rebuild images
-	./Fedora-efi-grub2.sh		$FVER	|| exit 1
+	./Fedora-efi-grub2.sh			|| exit 1
 	;;
 
 arm-b64)
 	# rebuild images
-	./Fedora-efi-grub2.sh 		$FVER	|| exit 1
-#	./Fedora-efi-systemd.sh 	$FVER	|| exit 1
+	./Fedora-efi-grub2.sh 			|| exit 1
+#	./Fedora-efi-systemd.sh 		|| exit 1
 	./CentOS8-efi.sh			|| exit 1
 	;;
 
 fedora)
 	# rebuild images
 	export IMAGEFISH_DESTDIR="$HOME/imagefish"
-	./Fedora-efi-grub2.sh		$FVER	|| exit 1
-	./Fedora-efi-systemd.sh		$FVER	|| exit 1
+	./Fedora-efi-grub2.sh			|| exit 1
+	./Fedora-efi-systemd.sh			|| exit 1
 	;;
 
 sirius)
