@@ -3,7 +3,7 @@ stages:
   - publish
 
 variables:
-  DEPS: "/usr/bin/guestfish xz sudo"
+  FISHDEPS: "/usr/bin/guestfish xz sudo"
 
 .store_images: &store_images
   - xz --verbose $(ls *.tar *.qcow2)
@@ -18,7 +18,7 @@ centos7:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:centos7
   before_script:
-    - time yum install -y $DEPS
+    - time yum install -y $FISHDEPS
   script:
     - sed -i -e '/proxy/d' repos/centos-7.repo
     - time ./CentOS7-efi.sh
@@ -31,7 +31,7 @@ centos8:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:centos8
   before_script:
-    - time dnf install -y $DEPS
+    - time dnf install -y $FISHDEPS
   script:
     - sed -i -e '/proxy/d' repos/centos-8.repo
     - time ./CentOS8-efi.sh
@@ -44,7 +44,7 @@ fedora:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   before_script:
-    - time dnf install -y $DEPS
+    - time dnf install -y $FISHDEPS
   script:
     - time ./Fedora-efi-grub2.sh
     - time ./Fedora-efi-systemd.sh
