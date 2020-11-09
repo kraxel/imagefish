@@ -3,7 +3,7 @@
 vers="$1"
 name="rhel-${vers}-wsl"
 repo="/mort/mirror/rhel/repo/el8/mirror-RHEL-${vers}-BaseOS.repo"
-rpms="-kernel* -microcode_ctl git-core"
+rpms="-kernel* -microcode_ctl -*-firmware"
 
 tar="${IMAGEFISH_DESTDIR-.}/${name}.tar"
 
