@@ -26,7 +26,9 @@ sirius)
 	# rebuild images
 	export IMAGEFISH_DESTDIR="/vmdisk/hdd/imagefish"
 	./RHEL7-efi.sh		7.8		|| exit 1
+	./RHEL7-efi.sh		7.9		|| exit 1
 	./RHEL8-efi.sh		8.2		|| exit 1
+	./RHEL8-efi.sh		8.3		|| exit 1
 	;;
 
 *)
