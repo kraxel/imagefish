@@ -57,6 +57,7 @@ wsl:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   script:
+    - sed -i -e '/proxy/d' repos/centos-8.repo
     - dnf install -y which
     - time ./Fedora-wsl.sh
     - time ./CentOS8-wsl.sh
