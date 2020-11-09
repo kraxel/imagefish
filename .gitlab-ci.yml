@@ -83,9 +83,9 @@ pages:
     - cat pages/wsl.html                        >> listing.html
     - cat public/*.html | grep "href.*tar.xz"   >> listing.html
     - cat pages/footer.html                     >> listing.html
-    - mv -v listing.html public
+    - mv -v listing.html public/index.html
     - tree --charset utf8 -T "images" -H . public > tree.html
-    - mv -v tree.html public/index.html
+    - mv -v tree.html public
   artifacts:
     paths:
       - public/
