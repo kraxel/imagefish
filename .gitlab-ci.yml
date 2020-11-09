@@ -58,6 +58,7 @@ wsl:
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   script:
     - time ./Fedora-wsl.sh
+    - time ./CentOS8-wsl.sh
     - *store_images
   artifacts:
     paths:
