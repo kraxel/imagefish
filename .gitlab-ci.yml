@@ -77,12 +77,15 @@ pages:
   script:
     - mkdir public
     - for d in centos7 centos8 fedora wsl; do mv -v ${d}/index.html public/${d}.html; done
-    - cat pages/header.html > listing.html
-    - grep "href.*xz" public/*.html >> listing.html
-    - cat pages/footer.html >> listing.html
+    - cat pages/header.html                     >  listing.html
+    - cat pages/efi.html                        >> listing.html
+    - cat public/*.html | grep "href.*efi.*xz"  >> listing.html
+    - cat pages/wsl.html                        >> listing.html
+    - cat public/*.html | grep "href.*wsl.*xz"  >> listing.html
+    - cat pages/footer.html                     >> listing.html
     - mv -v listing.html public
-    - tree --charset utf8 -T "images" -H . public > index.html
-    - mv -v index.html public
+    - tree --charset utf8 -T "images" -H . public > tree.html
+    - mv -v tree.html public/index.html
   artifacts:
     paths:
       - public/
