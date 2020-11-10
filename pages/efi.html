@@ -1,2 +1,22 @@
+
 <h2>qemu images</h2>
+
+<p>
+The images don't have a root password set.  You can use
+<tt>libguestfs-tools</tt> to set one ...
+</p>
+<pre>
+virt-customize -a <i>&lt;image&gt;</i> --root-password &quot;password:<i>&lt;secret&gt;</i>&quot;
+</pre>
+<p>
+... so you can login after boot
+</p>
+
+<p>
+The fedora and centos8 images will boot in both uefi and bios mode.
+Starting with <tt>systemd-nspawn --image=<i>&lt;image&gt;</i></tt>
+works too, but the images must be converted to raw format first;
+<tt>qemu-img convert ...</tt> can be used for that.
+</p>
+
 <p>
