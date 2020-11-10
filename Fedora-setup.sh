@@ -8,7 +8,7 @@ eval $(grep ID= /etc/os-release)
 
 if test ! -f "$repo" -a "$ID" = "fedora"; then
 	echo "# no repo, using machine repos"
-	for config in fedora; do
+	for config in fedora fedora-updates; do
 		file="/etc/yum.repos.d/${config}.repo"
 		echo "#   << $file"
 		sed	-e "s/^\[/[mkimage-/"			\

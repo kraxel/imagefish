@@ -71,7 +71,7 @@ while test "$1" != ""; do
 		shift; shift
 		;;
 	--big)
-		size="16G"
+		size="15G"
 		size_uefi="128"
 		size_boot="1024"
 		size_swap="1024"
