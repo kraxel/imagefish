@@ -156,24 +156,10 @@ fish copy-in $WORK/EFI/CLOVER/themes           /ESP/EFI/CLOVER
 fish copy-in $WORK/EFI/CLOVER/tools            /ESP/EFI/CLOVER
 fish copy-in $WORK/config.plist                /ESP/EFI/CLOVER
 
-if test -d $WORK/EFI/CLOVER/drivers64UEFI; then
-	fish copy-in $WORK/EFI/CLOVER/drivers64UEFI    /ESP/EFI/CLOVER
-	ddir="/ESP/EFI/CLOVER/drivers64UEFI"
-	nodef="$WORK/EFI/CLOVER/drivers-Off/drivers64UEFI"
-else
-	fish mkdir                                     /ESP/EFI/CLOVER/drivers
-	fish copy-in $WORK/EFI/CLOVER/drivers/UEFI     /ESP/EFI/CLOVER/drivers
-	ddir="/ESP/EFI/CLOVER/drivers/UEFI"
-	nodef="$WORK/EFI/CLOVER/drivers/off"
-fi
+fish mkdir                                     /ESP/EFI/CLOVER/drivers
+fish copy-in $WORK/EFI/CLOVER/drivers/UEFI     /ESP/EFI/CLOVER/drivers
+ddir="/ESP/EFI/CLOVER/drivers/UEFI"
 
-if test -f $nodef/OsxAptioFix3Drv-64.efi; then
-	echo "# -*- OsxAptioFix v3 -*-"
-	fish copy-in $nodef/OsxAptioFix3Drv-64.efi $ddir
-elif test -f $nodef/OsxAptioFix2Drv-64.efi; then
-	echo "# -*- OsxAptioFix v2 -*-"
-	fish copy-in $nodef/OsxAptioFix2Drv-64.efi $ddir
-fi
 for file in $drv; do
 	echo "# -*- extra driver: $file -*-"
 	fish copy-in $file $ddir
