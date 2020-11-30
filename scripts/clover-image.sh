@@ -151,6 +151,8 @@ fish mkdir                                     /ESP/EFI
 fish mkdir                                     /ESP/EFI/CLOVER
 fish copy-in $WORK/EFI/BOOT                    /ESP/EFI
 fish copy-in $WORK/EFI/CLOVER/CLOVERX64.efi    /ESP/EFI/CLOVER
+fish copy-in $WORK/EFI/CLOVER/kexts            /ESP/EFI/CLOVER
+fish copy-in $WORK/EFI/CLOVER/themes           /ESP/EFI/CLOVER
 fish copy-in $WORK/EFI/CLOVER/tools            /ESP/EFI/CLOVER
 fish copy-in $WORK/config.plist                /ESP/EFI/CLOVER
 
