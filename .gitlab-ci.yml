@@ -13,6 +13,7 @@ variables:
   - base="$CI_JOB_URL/artifacts/raw/$CI_JOB_NAME"
   - tree -i -f -s -h -D --charset utf8 -T "$name" -H "$base" $CI_JOB_NAME > index.html
   - mv --verbose index.html $CI_JOB_NAME
+  - ls -l -h $CI_JOB_NAME
 
 centos7:
   stage: images
