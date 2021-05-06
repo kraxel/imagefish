@@ -153,6 +153,7 @@ dnf)
 		tool="$tool --config=${conf}"
 		tool="$tool --setopt=reposdir=${dest}/etc/yum.repos.d"
 		tool="$tool --setopt=zchunk=off"
+		tool="$tool --setopt=install_weak_deps=False"
 		tool="$tool --releasever=0"
 	fi
 	if test "$platform" != ""; then
