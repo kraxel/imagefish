@@ -1,6 +1,6 @@
 #!/bin/sh
 
-vers="${1-34}"
+vers="${1-33}"
 repo="repos/fedora-${vers}-$(sh basearch.sh).repo"
 
 # figure what we are running on
