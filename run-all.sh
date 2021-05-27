@@ -15,14 +15,15 @@ arm-b64)
 	./CentOS8-efi.sh			|| exit 1
 	;;
 
-fedora)
+sirius)
 	# rebuild images
-	export IMAGEFISH_DESTDIR="$HOME/imagefish"
+	export IMAGEFISH_DESTDIR="/vmdisk/hdd/imagefish"
 	./Fedora-efi-grub2.sh			|| exit 1
 	./Fedora-efi-systemd.sh			|| exit 1
+	./RHEL8-efi.sh		8.3		|| exit 1
 	;;
 
-sirius)
+sirius-el7)
 	# rebuild images
 	export IMAGEFISH_DESTDIR="/vmdisk/hdd/imagefish"
 	./RHEL7-efi.sh		7.8		|| exit 1

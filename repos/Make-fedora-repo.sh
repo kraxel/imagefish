@@ -2,12 +2,8 @@
 
 # config
 mirror="http://spunk.home.kraxel.org/mirror/fedora/rsync"
-armv7="http://spunk.home.kraxel.org/mockify/repos/rpi2/"
-armv8="http://spunk.home.kraxel.org/mockify/repos/qcom/"
 
-#basepri="http://ftp.halifax.rwth-aachen.de/fedora/linux"
-basepri="http://mirror2.hs-esslingen.de/fedora/linux"
-basesec="http://ftp-stud.hs-esslingen.de/pub/fedora-secondary"
+basepri="http://fedora.mirror.kraxel.org/fedora/linux"
 proxy="http://spunk.home.kraxel.org:3128"
 
 ################################################################################
@@ -19,9 +15,7 @@ function makerepo() {
 
 	case "$basearch" in
 	aarch64)	base="$basepri"					;;
-#	armhfp)		base="$basepri"; kraxel="$armv7"		;;
 	armhfp)		base="$basepri"					;;
-	i386)		base="$basesec"					;;
 	x86_64)		base="$basepri"					;;
 	*)		echo "unknown basearch: $basearch"; exit 1	;;
 	esac
@@ -57,7 +51,7 @@ EOF
 
 ################################################################################
 
-rels="33"
+rels="33 34"
 archs="aarch64 armhfp x86_64"
 
 for rel in $rels; do
