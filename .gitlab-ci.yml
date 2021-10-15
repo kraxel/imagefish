@@ -48,7 +48,7 @@ fedora:
     - time dnf install -y $FISHDEPS
   script:
     - time ./Fedora-efi-grub2.sh
-    - time ./Fedora-efi-systemd.sh
+#    - time ./Fedora-efi-systemd.sh
     - *store_images
   artifacts:
     paths:
