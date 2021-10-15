@@ -21,5 +21,5 @@ exec virt-install \
 	--name "virt-install-${name}" \
 	--disk "bus=scsi,format=qcow2,sparse=yes,size=${size},path=${disk}" \
 	--initrd-inject "${kick}" \
-	--extra-args "console=ttyS0 ks=file:/${kick##*/}" \
+	--extra-args "console=ttyS0 inst.ks=file:/${kick##*/}" \
 	--location "$repo"
