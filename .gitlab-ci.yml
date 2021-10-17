@@ -53,7 +53,7 @@ fedora:
     paths:
       - fedora
 
-fedora-systemd:
+fedora_systemd:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   before_script:
@@ -85,6 +85,7 @@ pages:
     - centos7
     - centos8
     - fedora
+    - fedora_systemd
     - wsl
   script:
     - mkdir public
