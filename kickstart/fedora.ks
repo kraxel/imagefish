@@ -34,12 +34,14 @@ dracut-config-generic
 %post
 
 # setup grub.cfg for uefi boot
-grubefi=$(echo /boot/efi/EFI/*/grub*.efi)
-grubcfg=${grubefi%/*}/grub.cfg
-cat <<EOF > $grubcfg
+grubefi="$(echo /boot/efi/EFI/*/grub*.efi)"
+grubcfg="${grubefi%/*}/grub.cfg"
+cat <<'EOF' > "$grubcfg"
 # find and use grub.cfg on /boot filesystem
-search --no-floppy --set boot --file /grub2/grub.cfg
-configfile (\$boot)/grub2/grub.cfg
+search --no-floppy --set bootfs --file /grub2/grub.cfg
+set prefix=($bootfs)/grub2
+export $prefix
+configfile $prefix/grub.cfg
 EOF
 
 %end
