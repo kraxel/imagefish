@@ -3,8 +3,8 @@
 # args
 disk="$1"
 repo="$2"
-size="${3-4}"
-kick="${4-el8.ks}"
+kick="${3-el8.ks}"
+size="${4-4}"
 
 # go!
 name="$(basename $disk .qcow2)"
