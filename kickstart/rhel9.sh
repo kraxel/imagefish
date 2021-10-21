@@ -11,6 +11,6 @@ vers="9.0.0"
 for v in $vers; do
 	disk="${dest}/${name}-${v}-ks-x86_64.qcow2"
 	repo="${base}/latest-RHEL-${v}/compose/BaseOS/x86_64/os/"
-	./run-install.sh "$disk" "$repo" fedora.ks
+	../scripts/run-kickstart-install.sh "$disk" "$repo" fedora.ks
 	sudo chown kraxel.kraxel "$disk"
 done
