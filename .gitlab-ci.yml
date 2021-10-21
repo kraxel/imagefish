@@ -79,6 +79,7 @@ fedora_systemd:
 fedora_kickstart:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  when: manual
   before_script:
     - time dnf install -y $FISHDEPS $KICKDEPS
   script:
