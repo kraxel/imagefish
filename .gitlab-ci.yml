@@ -60,7 +60,9 @@ fedora:
     - time dnf install -y $FISHDEPS
   script:
     - time ./Fedora-efi-grub2.sh
+    - time ./Fedora-efi-systemd.sh
     - *store_images
+    - rm -f *.tar
   artifacts:
     paths:
       - fedora
@@ -68,6 +70,7 @@ fedora:
 fedora_systemd:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  when: manual
   before_script:
     - time dnf install -y $FISHDEPS
   script:
@@ -114,7 +117,6 @@ pages:
     - centos7
     - centos8
     - fedora
-    - fedora_systemd
     - wsl
   script:
     - mkdir public
