@@ -61,8 +61,8 @@ fedora:
   script:
     - time ./Fedora-efi-grub2.sh
     - time ./Fedora-efi-systemd.sh
-    - *store_images
     - rm -f *.tar.gz
+    - *store_images
   artifacts:
     paths:
       - fedora
