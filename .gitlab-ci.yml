@@ -4,6 +4,7 @@ stages:
 
 variables:
   FISHDEPS: "/usr/bin/guestfish /usr/bin/virt-sysprep /usr/bin/virt-sparsify xz sudo jq"
+  KICKDEPS: "/usr/bin/virt-install"
 
 .store_images: &store_images
   - mkdir $CI_JOB_NAME
@@ -78,7 +79,7 @@ fedora_kickstart:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   before_script:
-    - time dnf install -y $FISHDEPS
+    - time dnf install -y $FISHDEPS $KICKDEPS
   script:
     - time ./kickstart/run-install.sh
       fedora-34-ks-x86_64.qcow2
