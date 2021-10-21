@@ -72,7 +72,22 @@ fedora_systemd:
     - *store_images
   artifacts:
     paths:
-      - fedora
+      - fedora_systemd
+
+fedora_kickstart:
+  stage: images
+  image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  before_script:
+    - time dnf install -y $FISHDEPS
+  script:
+    - time ./kickstart/run-install.sh
+      fedora-34-ks-x86_64.qcow2
+      https://download.fedoraproject.org/pub/fedora/linux/releases/34/Server/x86_64/os/
+      kickstart/fedora.ks
+    - *store_images
+  artifacts:
+    paths:
+      - fedora_kickstart
 
 wsl:
   stage: images
