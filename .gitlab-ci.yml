@@ -14,7 +14,7 @@ variables:
     virt-sysprep -a "$image";
     virt-sparsify --inplace "$image";
     info=${image%.qcow2}.info;
-    qemu-img info --format=json $image > $info;
+    qemu-img info --output=json $image > $info;
     mv --verbose $info $CI_JOB_NAME;
     done
   - xz --verbose $(ls *.tar *.qcow2)
@@ -82,6 +82,7 @@ fedora_kickstart:
   before_script:
     - time dnf install -y $FISHDEPS $KICKDEPS
   script:
+    - sudo systemctl start libvirtd
     - time ./kickstart/run-install.sh
       fedora-34-ks-x86_64.qcow2
       https://download.fedoraproject.org/pub/fedora/linux/releases/34/Server/x86_64/os/
