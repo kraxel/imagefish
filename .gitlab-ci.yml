@@ -62,7 +62,7 @@ fedora:
     - time ./Fedora-efi-grub2.sh
     - time ./Fedora-efi-systemd.sh
     - *store_images
-    - rm -f *.tar
+    - rm -f *.tar.gz
   artifacts:
     paths:
       - fedora
