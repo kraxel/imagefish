@@ -67,19 +67,6 @@ fedora:
     paths:
       - fedora
 
-fedora_systemd:
-  stage: images
-  image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
-  when: manual
-  before_script:
-    - time dnf install -y $FISHDEPS
-  script:
-    - time ./Fedora-efi-systemd.sh
-    - *store_images
-  artifacts:
-    paths:
-      - fedora_systemd
-
 fedora_kickstart:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
@@ -87,7 +74,7 @@ fedora_kickstart:
   before_script:
     - time dnf install -y $FISHDEPS $KICKDEPS
   script:
-    - sudo systemctl start libvirtd
+    - /usr/sbin/libvirtd --daemon --listen
     - time ./kickstart/run-install.sh
       fedora-34-ks-x86_64.qcow2
       https://download.fedoraproject.org/pub/fedora/linux/releases/34/Server/x86_64/os/
