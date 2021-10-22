@@ -74,7 +74,7 @@ fedora_kickstart:
   before_script:
     - time dnf install -y $FISHDEPS $KICKDEPS
   script:
-    - /usr/sbin/libvirtd --daemon --listen
+    - sudo /usr/sbin/libvirtd --daemon --listen
     - time ./kickstart/run-install.sh
       fedora-34-ks-x86_64.qcow2
       https://download.fedoraproject.org/pub/fedora/linux/releases/34/Server/x86_64/os/
