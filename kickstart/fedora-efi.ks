@@ -2,22 +2,24 @@
 rootpw --plaintext root
 firstboot --disable
 reboot
+repo --name=kraxel --baseurl=http://sirius.home.kraxel.org/repo/  # edk2-ext4
 
 # bios/uefi boot partitioning
 ignoredisk --only-use=sda
 clearpart --all --initlabel --disklabel=gpt --drives=sda
 part /boot/efi --size=100 --fstype=efi
-part /boot     --size=500 --fstype=xfs --label=boot
+part /boot     --size=500 --fstype=ext4 --label=boot
 part /         --size=999 --fstype=xfs --label=root --grow
 bootloader --append="console=ttyS0"
 
 # minimal package list
 %packages
 @core
-shim-x64
-grub2-efi-x64
+-shim-x64
+-grub2-efi-x64
 -dracut-config-rescue
 dracut-config-generic
+edk2-ext4
 %end
 
 %post
