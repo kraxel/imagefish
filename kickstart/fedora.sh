@@ -2,7 +2,7 @@
 
 # config
 name="fedora"
-vers="34"
+vers="36"
 repo="http://spunk.home.kraxel.org/mirror/fedora/rsync/f${vers}-release/Server/x86_64/os/"
 dest="/vmdisk/hdd/imagefish"
 
