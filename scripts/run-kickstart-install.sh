@@ -9,6 +9,15 @@ size="${4-4}"
 # go!
 name="$(basename $disk .qcow2)"
 
+case "$kick" in
+    *efi*)
+        extra="--boot uefi"
+        ;;
+    *)
+        extra=""
+        ;;
+esac
+
 rm -f "$disk"
 exec virt-install \
 	--virt-type kvm \
@@ -22,4 +31,5 @@ exec virt-install \
 	--disk "bus=scsi,format=qcow2,sparse=yes,size=${size},path=${disk}" \
 	--initrd-inject "${kick}" \
 	--extra-args "console=ttyS0 inst.ks=file:/${kick##*/}" \
-	--location "$repo"
+	--location "$repo" \
+	$extra
