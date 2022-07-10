@@ -2,7 +2,7 @@
 rootpw --plaintext root
 firstboot --disable
 reboot
-repo --name=kraxel --baseurl=http://sirius.home.kraxel.org/repo/  # edk2-ext4
+repo --name=kraxel --baseurl=http://sirius.home.kraxel.org/repo/  # edk2-ext4 + edk2-shell
 
 # bios/uefi boot partitioning
 ignoredisk --only-use=sda
@@ -20,6 +20,7 @@ bootloader --append="console=ttyS0"
 -dracut-config-rescue
 dracut-config-generic
 edk2-ext4
+edk2-shell
 %end
 
 %post
