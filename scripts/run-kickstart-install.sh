@@ -8,6 +8,7 @@ size="${4-4}"
 
 # go!
 name="$(basename $disk .qcow2)"
+xterm-title "kickstart install: $name"
 
 case "$kick" in
     *efi*)
