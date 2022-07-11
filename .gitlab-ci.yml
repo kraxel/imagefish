@@ -43,7 +43,6 @@ el7:
 el8:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:el8
-  when: manual
   before_script:
     - time dnf install -y $FISHDEPS
   script:
@@ -57,6 +56,7 @@ el8:
 fedora:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  when: manual
   before_script:
     - time dnf install -y $FISHDEPS
   script:
@@ -104,9 +104,9 @@ pages:
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   dependencies:
     - el7
-#    - el8
-    - fedora
-#    - wsl
+    - el8
+#    - fedora
+    - wsl
   script:
     - mkdir public
     - for d in centos7 centos8 fedora wsl; do mv -v ${d}/index.html public/${d}.html; done
