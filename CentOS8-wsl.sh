@@ -2,7 +2,7 @@
 
 vers="${1-8}"
 name="centos-${vers}-wsl"
-repo="repos/centos-${vers}.repo"
+repo="repos/centos-${vers}-stream.repo"
 rpms="-kernel* -microcode_ctl -*-firmware git-core"
 
 tar="${IMAGEFISH_DESTDIR-.}/${name}.tar"

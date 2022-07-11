@@ -2,7 +2,7 @@
 
 vers="${1-8}"
 name="centos-${vers}-efi"
-repo="repos/centos-${vers}.repo"
+repo="repos/centos-${vers}-stream.repo"
 rpms="shim -grubby -dracut-config-rescue dracut-config-generic"
 
 rpms_x86_64="shim grub2-efi-x64 grub2-pc"
