@@ -46,7 +46,7 @@ el8:
   before_script:
     - time dnf install -y $FISHDEPS
   script:
-    - sed -i -e '/proxy/d' repos/centos-8.repo
+    - sed -i -e '/proxy/d' repos/centos-8-stream.repo
     - time ./CentOS8-efi.sh
     - *store_images
   artifacts:
@@ -88,9 +88,8 @@ fedora_kickstart:
 wsl:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
-  when: manual
   script:
-    - sed -i -e '/proxy/d' repos/centos-8.repo
+    - sed -i -e '/proxy/d' repos/centos-8-stream.repo
     - dnf install -y which
     - time ./Fedora-wsl.sh
     - time ./CentOS8-wsl.sh
