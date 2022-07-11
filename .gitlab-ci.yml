@@ -103,10 +103,10 @@ pages:
   stage: publish
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   dependencies:
-    - centos7
-    - centos8
+    - el7
+#    - el8
     - fedora
-    - wsl
+#    - wsl
   script:
     - mkdir public
     - for d in centos7 centos8 fedora wsl; do mv -v ${d}/index.html public/${d}.html; done
