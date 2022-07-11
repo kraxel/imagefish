@@ -27,9 +27,9 @@ variables:
   - mv --verbose index.html $CI_JOB_NAME
   - ls -l -h $CI_JOB_NAME
 
-centos7:
+el7:
   stage: images
-  image: registry.gitlab.com/kraxel/rpm-package-builder:centos7
+  image: registry.gitlab.com/kraxel/rpm-package-builder:el7
   before_script:
     - time yum install -y $FISHDEPS
   script:
@@ -40,9 +40,10 @@ centos7:
     paths:
       - centos7
 
-centos8:
+el8:
   stage: images
-  image: registry.gitlab.com/kraxel/rpm-package-builder:centos8
+  image: registry.gitlab.com/kraxel/rpm-package-builder:el8
+  when: manual
   before_script:
     - time dnf install -y $FISHDEPS
   script:
@@ -87,6 +88,7 @@ fedora_kickstart:
 wsl:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
+  when: manual
   script:
     - sed -i -e '/proxy/d' repos/centos-8.repo
     - dnf install -y which
