@@ -108,7 +108,7 @@ pages:
     - wsl
   script:
     - mkdir public
-    - for d in centos7 centos8 fedora wsl; do mv -v ${d}/index.html public/${d}.html; done
+    - for d in el7 el8 wsl; do mv -v ${d}/index.html public/${d}.html; done
     - cat pages/header.html                     >  listing.html
     - cat pages/efi.html                        >> listing.html
     - cat public/*.html | grep "href.*qcow2.xz" >> listing.html
