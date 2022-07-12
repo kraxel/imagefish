@@ -38,7 +38,7 @@ el7:
     - *store_images
   artifacts:
     paths:
-      - centos7
+      - el7
 
 el8:
   stage: images
@@ -51,7 +51,7 @@ el8:
     - *store_images
   artifacts:
     paths:
-      - centos8
+      - el8
 
 fedora:
   stage: images
