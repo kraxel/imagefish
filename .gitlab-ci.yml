@@ -43,6 +43,7 @@ el7:
 el8:
   stage: images
   image: registry.gitlab.com/kraxel/rpm-package-builder:el8
+  when: manual
   before_script:
     - time dnf install -y $FISHDEPS
   script:
@@ -103,12 +104,12 @@ pages:
   image: registry.gitlab.com/kraxel/rpm-package-builder:fedora
   dependencies:
     - el7
-    - el8
+#    - el8
 #    - fedora
     - wsl
   script:
     - mkdir public
-    - for d in el7 el8 wsl; do mv -v ${d}/index.html public/${d}.html; done
+    - for d in el7 wsl; do mv -v ${d}/index.html public/${d}.html; done
     - cat pages/header.html                     >  listing.html
     - cat pages/efi.html                        >> listing.html
     - cat public/*.html | grep "href.*qcow2.xz" >> listing.html
