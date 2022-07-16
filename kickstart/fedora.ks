@@ -30,7 +30,6 @@ shim
 -dracut-config-rescue
 dracut-config-generic
 efibootmgr
-pesign
 %end
 
 %post
