@@ -21,6 +21,8 @@ bootloader --append="console=ttyS0"
 -grub2-efi-x64
 -dracut-config-rescue
 dracut-config-generic
+efibootmgr
+pesign
 
 edk2-ext4
 edk2-shell
