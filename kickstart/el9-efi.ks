@@ -18,6 +18,7 @@ shim-x64
 grub2-efi-x64
 -dracut-config-rescue
 dracut-config-generic
+efibootmgr
 %end
 
 %post
