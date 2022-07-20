@@ -23,9 +23,6 @@ bootloader --append="console=ttyS0"
 dracut-config-generic
 efibootmgr
 
-edk2-ext4
-edk2-shell
-
 kernel-core
 kernel-initrd-virt
 -kernel
@@ -48,5 +45,20 @@ fi
 # setup discoverable partitions
 /usr/sbin/sfdisk --part-type /dev/sda 2 BC13C2FF-59E6-4262-A352-B275FD6F7172  # Linux extended boot
 /usr/sbin/sfdisk --part-type /dev/sda 3 4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709  # Linux root (x86-64)
+
+# anaconda refuses to use vfat for /boot -> fixup
+set -x
+tmpboot="/tmp/boot.fs"
+umount -v /boot/efi
+mkdir ${tmpboot}
+mv -v /boot/* ${tmpboot}
+umount -v /boot
+mkfs.vfat -n boot /dev/sda2
+sed -i -e '/ext4/s|.*|LABEL=boot /boot vfat defaults,uid=0,gid=0,umask=022,shortname=winnt 1 2|' /etc/fstab
+cat /etc/fstab
+mount -v /boot
+mv -v ${tmpboot}/* /boot
+rmdir ${tmpboot}
+mount -v /boot/efi
 
 %end
